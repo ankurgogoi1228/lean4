@@ -234,6 +234,50 @@ for m in (1, 2, 3, 10):
     ck(F(9 * m) < F(3 * n, 4), '§7.2: 9m < 3n/4 (so NOT 3/4-Condorcet)', f'm={m}')
     ck(9 * m > 0 and F(9 * m, n) < F(3, 4), '§7.2 margin ratio < 3/4', f'm={m}')
 
+# ============ v3: the Remark 2 clarification and the restated 7.1 range ============
+# Remark 2: retaining s/2 gives nt - W > ns/2  <=>  W < n(3K-2k-3)/4   (odd K),
+# and relaxing to the parity-free bound gives nt - W > n(s/2 - eps/4).
+for K in KS:
+    for k in range(1, r_(K) + 1):
+        A = 3 * K - 2 * k - 2
+        # 4t - A = 2s - eps   (so (4t-A)/4 = s/2 - eps/4)
+        ck(4 * t_(K, k) - A == 2 * s_(K, k) - e_(K),
+           'v3 Remark 2: 4t-(3K-2k-2) = 2s-eps', f'K={K} k={k}')
+        # q_0 - q* = eps/(4t)
+        ck(q0(K, k) - qstar(K, k) == F(e_(K), 4 * t_(K, k)),
+           'v3 Remark 2: q_0-q* = eps/(4t)', f'K={K} k={k}')
+        if e_(K) == 1:
+            # t - s/2 = (3K-2k-3)/4, i.e. the sharp odd-K bound
+            ck(4 * t_(K, k) - 2 * s_(K, k) == 3 * K - 2 * k - 3,
+               'v3 Remark 2: 4(t-s/2) = 3K-2k-3 (odd K)', f'K={K} k={k}')
+
+# v3 7.1: for odd K, q_0 is loose for complete unacceptability for ALL 2 <= k <= r
+for K in range(5, 40, 2):
+    for k in range(2, r_(K) + 1):
+        ck(ql(K, k, k) < q0(K, k), 'v3 7.1: odd K, 2<=k<=r => q_comp* < q_0', f'K={K} k={k}')
+# both k=2 cases named in the abstract / 7.1
+ck(ql(3, 2, 2) < q0(3, 2), 'v3: boundary K=3, k=2=r+1 => loose')
+for K in range(5, 40, 2):
+    ck(ql(K, 2, 2) < q0(K, 2), 'v3: in-range odd K>=5, k=2<=r => loose', f'K={K}')
+
+# Lemma 2, exact per-ballot deficits (not just inequalities): the bounds are attained
+for K in (5, 7):
+    r, eps = r_(K), e_(K)
+    for k in range(1, r + 1):
+        s = s_(K, k)
+        D = [d for d in range(K) if d >= k]
+        seen_below = seen_on = False
+        for perm in itertools.permutations(range(K)):
+            rank = perm.index(0) + 1
+            tw = sum(1 for d in D if perm.index(d) < perm.index(0))
+            if rank > K - r and tw == s:
+                seen_below = True
+            if rank == r + 1 and tw == s - 1:
+                seen_on = True
+        ck(seen_below, 'v3 Lemma 2: below-line bound s is attained', f'K={K} k={k}')
+        if eps == 1:
+            ck(seen_on, 'v3 Lemma 2: on-line bound s-1 is attained', f'K={K} k={k}')
+
 print()
 print('assertions checked:', NCHECK)
 print('failures:', len(FAILS))
