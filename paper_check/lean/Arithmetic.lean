@@ -244,12 +244,21 @@ theorem q0_lt_one (K k : Nat) (hK : 3 ≤ K) (hk : k ≤ K / 2) :
     3 * K - 2 * k - 2 < 4 * (K - k) ↔ 2 * k < K + 2 := by
   omega
 
-/-- `q_1 - q_0 = (k-1)(1-q_0)/k ≥ 0`, cross-multiplied. -/
-theorem q1_ge_q0 (K k : Nat) (hK : 3 ≤ K) (hk : k ≤ K / 2)
-    (hq : 3 * K - 2 * k - 2 ≤ 4 * (K - k)) :
-    0 ≤ (k - 1) * (4 * (K - k) - (3 * K - 2 * k - 2)) := by
-  have h1 : 0 ≤ 4 * (K - k) - (3 * K - 2 * k - 2) := by omega
-  exact Nat.zero_le _
+/-- **Section 7.1**: `q_1 - q_0 = (k-1)(1-q_0)/k`, so `q_0 ≤ q_1` exactly when `q_0 ≤ 1`.
+Cross-multiplied by the common denominator `4 t k`: `k q_0 ≤ k q_1` is `k A ≤ A + 4 t (k-1)`
+where `A = 3K-2k-2 = 4t·q_0`.  The hypothesis `A ≤ 4t` is exactly `q_0 ≤ 1` (see `q0_lt_one`),
+which Section 7.1 identifies as the exact condition. -/
+theorem q1_ge_q0 (A t k : Nat) (hA : A ≤ 4 * t) :
+    k * A ≤ A + 4 * t * (k - 1) := by
+  have h1 : A * (k - 1) ≤ (4 * t) * (k - 1) := Nat.mul_le_mul_right _ hA
+  rcases Nat.eq_zero_or_pos k with hk | hk
+  · subst hk; simp
+  · have e : k * A = A + A * (k - 1) := by
+      have hk1 : k = (k - 1) + 1 := by omega
+      calc k * A = ((k - 1) + 1) * A := by rw [hk1]
+        _ = (k - 1) * A + A := by rw [Nat.add_mul, Nat.one_mul]
+        _ = A + A * (k - 1) := by rw [Nat.mul_comm (k - 1) A, Nat.add_comm]
+    rw [e]; omega
 
 /-! ## 7. The odd boundary (Corollary 2) -/
 

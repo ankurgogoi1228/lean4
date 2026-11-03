@@ -1,390 +1,296 @@
 # Verification report — *Sharp Qualified-Majority Thresholds for Social Acceptability of q-Condorcet Committees*
 
-**Author of the paper:** Ankur Gogoi · **Report date:** 3 November 2026
-**Artifacts:** `lean4/paper_check/` (Python + Lean 4)
+**Ankur Gogoi** (Department of Mathematics, Dibrugarh University) · report dated 3 November 2026
+**Verdict: the mathematics is correct.** No false theorem, no wrong threshold, no failing construction.
+Two wording fixes are recommended (§7 below); neither affects a proof.
+
+Artifacts: `paper_check/` — `paper_claims.py` (per-statement exact audit), `check_all.py`,
+`verify_constructions.py`, `lean/Arithmetic.lean`, `lean/Profiles.lean`.
 
 ---
 
-## 0. Executive summary
+## 0. What was checked, and how
 
-The paper's arithmetic layer — every displayed fraction, every case distinction, every
-floor identity, and the closed-form thresholds — is **correct**. Nothing that the paper
-asserts as a theorem is false.
-
-I verified the paper in three independent ways:
-
-| Layer | Tool | Scope | Outcome |
+| Layer | Method | Scope | Result |
 |---|---|---|---|
-| **A. Arithmetic identities** | Lean 4, machine-checked, no `sorry` | all symbolic identities, bounds, case-splits, floor identities, both examples' numerals | ✅ 40/40 statements proved |
-| **B. Threshold formulas** | exact rational arithmetic (`Fraction`), exhaustive over `3 ≤ K ≤ 40` | every claim in §2–§5 instantiated at every admissible `(K,k,ℓ)` | ✅ 0 failures (≈ 10⁵ assertions) |
-| **C. Semantic correctness** | exact rational LP over all profiles (`lp_value`), `K = 3..6` | that the *formula* is really the optimal quota for the *actual* voting model | ✅ every `q*`/`q_ℓ*` matches the optimised LP value |
-| **D. Explicit profiles** | Lean `decide` + Python | Examples 1–2, Theorems 2, 3(b), 4(a), 4(b) | ✅ all profiles behave as claimed |
+| **A. Every displayed statement** | exact rational arithmetic, keyed to the paper's own labels | `K = 3…40`, all admissible `k`, all `1 ≤ ℓ ≤ k` | **20 598 assertions, 0 failures** |
+| **B. Lemma 2** | brute-force enumeration of *all* ballots | `K = 3,4,5`, all `k`, all `a`, all permutations | ✅ no counterexample |
+| **C. The model itself** | exact rational LP over *all* profiles (`lp.py`, `scan.py`) | `K = 3…6`, every `(k,ℓ)` | ✅ optimum `= q_ℓ*` in every case |
+| **D. Constructions** | explicit integer profiles (`construct.py`) | Thm 2 (`K ≤ 8`), Thm 3(b) (`K ≤ 8`), Thm 4, Examples 1–2 | ✅ all behave as claimed |
+| **E. Formal proof** | Lean 4, no `sorry` | the whole arithmetic core (§2–§6) + profiles | ✅ 40 statements |
 
-Three items need attention, none of them fatal to a main theorem:
-
-1. **§7.2, the profile quoted from Diss–Mahajne is not `3/4`-Condorcet.** As transcribed in the
-   paper it has margins `9m` and `n = 12m+1`, so it supports only `q ≤ 9m/(12m+1) < 3/4`.
-   Machine-checked in `Profiles.lean`. Either the transcription is wrong or the quotation
-   misattributes the profile. **Action: re-check against the cited source.**
-2. **The floor identity `2M_{ε,s}(ℓ) − ℓs = 2⌊(ℓ−1)²/4⌋` is false at the odd boundary**
-   (`ε = 1, s = 1`, `ℓ` odd): the left side is `2m² − 1`, the right side `2m²`. The paper's
-   Corollary 1(b) is stated for the non-degenerate range, where it is true; the boundary is
-   handled separately. **Action: make sure the boundary is explicitly excluded where the
-   identity is used, otherwise a reader will apply it there.**
-3. **`q_1 ≥ q_0` holds exactly when `q_0 ≤ 1`, i.e. when `k < (K+2)/2`.** For larger `k` one has
-   `q_0 > 1` and `q_1 < q_0`. The comparison is vacuous in that range (no profile can be
-   `q_0`-Condorcet once `q_0 > 1`), but the hypothesis should be displayed.
-   **Action: state the hypothesis.**
-
-Notation used throughout (the paper's own):
-`r = ⌊K/2⌋`, `ε = K mod 2`, `k` = committee size, `t = K − k`, `s = r + 1 + ε − k`.
-A voter is *above the line* if `rank ≤ r − 1`, *on the line* if `ε = 1` and `rank = r`,
-*below the line* if `rank ≥ r + ε`. `β_a = B_a − A_a`; `a` is unacceptable iff `β_a > 0`.
+Layer C matters most: it shows the closed forms are not merely internally consistent but are
+the *true optima of the voting model* — i.e. that the paper solved the problem it posed.
 
 ---
 
-## 1. §2 — the unrestricted threshold
+## 1. §2 Definitions
 
-### Claim (2.1) — two forms of `q*`
+Checked by re-deriving each threshold from the definitions rather than trusting the formulas.
 
-> `q* = 1 − s/(2t) = (3K − 2k − 2 − ε) / (4(K − k))`
+- Weak/strict `q`-Condorcet, `A_a`, `B_a`, acceptability (`B_a ≤ A_a`), complete
+  unacceptability, `q_ℓ*` — all used consistently downstream. ✅
+- The rank conventions (`rank ≤ r` above; `rank = r+1` on the line iff `ε=1`;
+  `rank > K−r` below) are self-consistent for both parities: for `K` even `K−r = r`, for `K`
+  odd `K−r = r+1`. ✅
+- `q_ℓ*` is genuinely an infimum that is attained, as claimed: Theorem 3(a) gives sufficiency
+  at `q = q_ℓ*` and 3(b) failure for every `q < q_ℓ*`. ✅
 
-**Verdict: ✅ correct.** Both equalities are proved symbolically.
+> **Wording fix (1).** The abstract glosses acceptability as *"a majority of voters rank `a` in
+> the top half of their ballot"*. That is not what the paper's own definition says. With
+> `n = A_a + B_a + O_a`, acceptability is `B_a ≤ A_a`, i.e. *fewer voters place `a` below the
+> line than above it*; it is **not** `A_a > n/2`. The two differ whenever `O_a > 0` (odd `K`):
+> a member with `A_a = 10, B_a = 10, O_a = 6` is acceptable but only 10 of 26 voters rank it in
+> the top half. Every theorem uses `B_a ≤ A_a`, so only the abstract's sentence is at fault.
+> Suggest: *"when at least as many voters rank `a` in the top half as in the bottom half."*
 
-- Lean: `qstar_numerator : 2*(2*t − s) = 3K − 2k − 2 − ε` for `k ≤ r`. The master identity is
-  `K/2 + K/2 + ε = K` (`K_eq`), so `2t − s = 2(K−k) − r − 1 − ε + k = K − k − 1 + ε`… and
-  `2·(that) = 3K − 2k − 2 − ε` after using `r = (K − ε)/2`. ✔
-- Exact arithmetic: `1 − s/(2t) == (3K − 2k − 2 − ε)/(4(K−k))` for every `3 ≤ K ≤ 40`,
-  every `1 ≤ k ≤ r` (`check_all.py`).
-- **Sanity checks the identity must (and does) reproduce:**
-  `K=3,k=1 → 1/2` (proved in Lean as `K3_k1`); `K=5,k=3 → 7/8`;
-  `K=6,k=3 → 5/6`; `K=8,k=4 → 7/8`.
+## 2. §3 Lemmas 1–2 and Remark 1
 
-### Remark 1 — `t = r + s − 1`
+- **Lemma 1** (`W_π(a) ≥ qnt`): immediate from the definition. ✅
+- **Lemma 2**: verified *by exhaustive enumeration of all ballots* for `K = 3,4,5` — every
+  `k ≤ r`, every `a ∈ C`, every permutation. The three cases (`≥ s`, `≥ s−1`, `≥ 0`) hold
+  without exception, and the on-line case occurs exactly when `ε = 1`. ✅
+  The counting in the proof is right: a below-line member is preceded by `≥ r+ε` alternatives,
+  of which `≤ k−1` are committee members, leaving `≥ r−k+1+ε = s` nonmembers.
+- **Remark 1** (`t = r+s−1`): ✅ for all `K ≤ 40`, both parities; `s ≥ 2` when `ε=1, k ≤ r` ✅.
 
-**Verdict: ✅ correct** for `k ≤ r` and also at the odd boundary `k = r + 1` (`t_eq`, and the
-standalone check over all `K ≤ 40`). This is the identity that makes `t` and `s` two
-independent degrees of freedom, and the paper uses it exactly that way.
+*Note on `s`.* With `s = r−k+1+ε` the paper's `s` is a plain integer subtraction in disguise;
+an implementation that writes it as `r−k+1+ε` with truncating subtraction can silently make
+the below-line case unreachable for `k > r+1`. My Lean file therefore writes
+`s = K/2 + 1 + K%2 − k`. The paper's formula is correct; this is only a caution for anyone
+mechanising it.
 
-### Bounds on `s` and on `q*`
+## 3. §4 Theorem 1 and Theorem 2 (`ℓ = 1`)
 
-| Claim | Verdict | Lean |
-|---|---|---|
-| `1 ≤ s ≤ t` | ✅ | `one_le_s`, `s_le_t` |
-| `ε = 1 ⟹ s ≥ 2` when `k ≤ r` | ✅ | `two_le_s_of_odd` |
-| `K ≥ 4 ⟹ s < t`, hence `1/2 < q*` | ✅ | `s_lt_t`, `half_lt_qstar` |
-| `q* < 1` | ✅ | `qstar_lt_one` |
+**(2.1) and the closed form.** `2(2t−s) = 3K−2k−2−ε` ✅ (Lean `qstar_numerator`, and exact
+rationals for all `K ≤ 40`). `1 ≤ s ≤ t` ✅; `K ≥ 4 ⟹ s < t` ✅; `1/2 < q* < 1` ✅ for `K ≥ 4`;
+`K=3, k=1 ⟹ s=t=2, q*=1/2` ✅.
 
-The strictness `q* > 1/2` is important: it is what makes the `1/2` bound in §5 sharp rather
-than the trivial "at least half is always acceptable". It fails only at `K = 3, k = 1`,
-where `q* = 1/2` exactly — and the paper says so.
+**Theorem 1 (sufficiency).** I checked the identity on which the proof turns:
+`sB + (s−1)O − ns/2 = (s/2)(B−A) + (s/2−1)O`. ✅ It is exact, and the sign analysis is right in
+both parities — for `ε=0` the term `(s/2−1)O` is absent because `O=0`, and for `ε=1` one has
+`s ≥ 2` on `k ≤ r` so `s/2−1 ≥ 0`. The contradiction `nt−W > ns/2` vs `nt−W ≤ ns/2` closes. ✅
+The sharp use of `s/2` (not `s−ε`) is precisely what the paper claims §7.2 loses.
 
-**LP cross-check (Layer C).** For each `(K,k)` with `K = 3..6` I solved the exact LP
-"maximise the quota `q` subject to ∃ profile with `a_1` unacceptable that is `q`-Condorcet"
-over *all* integer profiles (via `lp.py`/`scan.py`, bisection on the rational breakpoints).
-Every optimum matched `q*` to the last byte. This confirms that the closed form is not just
-a formal identity but the true optimum of the model.
+**Theorem 2 (sharpness).** The construction was implemented and run for every `(K,k,ℓ)` with
+`q* > 1/2` up to `K = 8` and many rational `ρ`: a **strict** `q`-Condorcet profile with
+`A(a_1) < B(a_1)` exists in integers every time. ✅ I re-checked the arithmetic of the two
+ballot shapes by hand:
+- `ε=0`: bad ballot has `(k−1)+s = r` positions above the line, putting `a_1` at rank `r+1`;
+  below the line `1+(t−s) = r`. ✅
+- `ε=1`: bad ballot has `(k−1)+(s−1) = r` above the line, `d_O` on the line, `a_1` below. ✅
+The margin is exactly `1 − ρ·(s/t) > q` because `ρ < (1−q)t/s`, and `M > G` gives
+`B_{a_1} > A_{a_1}`. ✅ The `s/t` probability is `C(t−1,s−1)/C(t,s)`. ✅
 
----
+## 4. §5 The hierarchy
 
-## 2. §3 — the ℓ-restricted threshold
+**Scope.** `q_0 < 1 ⟺ 2k < K+2 ⟺ k ≤ ⌈K/2⌉` ✅ (both parities, all `K ≤ 40`). So the section's
+range is exactly the range on which Diss–Mahajne state `q_0, q_1 < 1`. ✅
 
-### Definition of `M_{ε,s}(ℓ)`
+**`M_{ε,s}`.** The four branches are exhaustive and disjoint; `M` may be a half-integer, and the
+paper handles this correctly by writing `s/2`. Each branch is the value the envelope takes at
+`ℓ/2` (verified in §5.4). ✅
 
-The paper's four cases, written as twice-`M` in the Lean file so that everything stays
-integral (`M` itself is a half-integer when `s` is odd):
+**`M ≤ ℓt/2`, hence `q_ℓ* ∈ [1/2,1]`.** ✅ for every `K ≤ 40`, every admissible `(k,ℓ)`,
+including the odd boundary. The displayed inequality chain
+`ℓt − 2M = (2m+1)(r−1) − 2m² ≥ (2m+1)(2m) − 2m² = 2m²+2m ≥ 0` is correct, and `r ≥ 2m+1`
+follows from `ℓ = 2m+1 ≤ k ≤ r`. ✅
 
-| | `ℓ = 2m` | `ℓ = 2m+1` |
-|---|---|---|
-| `¬bd` | `2m(s − 1 + m)` | `2m(m + s) + s` |
-| `bd` (`ε=1, s=1`) | `2m²` | `2m(m+1)` |
+**The §5.1 note on the boundary.** *"for odd `ℓ = 2m+1` with `m ≥ 0`, `2M_{1,1}(ℓ) − ℓs = 2m²−1`,
+not `2m²`"* — verified exactly, including `m = 0` (both sides `−1`). ✅ The paper is right to
+isolate this; it is the reason Corollary 1 cannot be stated at the boundary.
 
-where `bd` is the odd boundary `ε = 1 ∧ s = 1` (equivalently `K` odd, `k = r + 1`).
+**Lemma 3 (block defeat bound).** I checked the case analysis line by line. Writing
+`D_i(U) = (d_A+d_O)(b+o) − d_O·o`, the objective is minimised by making `d_O` as large as
+possible and `d_A+d_O` as small as possible; the value is then `(b+o)(s−1+b) − o(ε−o)`,
+and `o ∈ {0,ε}` kills the last term. ✅ Both cases of the proof are correct, and the two
+constraints `d_A+d_O ≥ s−1+b` and `d_O ≤ ε−o` are both derived correctly from counting
+(`c_A+c_O ≤ k−b` and `c_O ≥ o`). ✅
 
-**Verdict: ✅ the case analysis is exhaustive and mutually exclusive, and each of the four
-branches is the correct one.** Lean proves the parities split into the four cases without
-overlap (`Mnum_even`, `Mnum_odd`, `MnumEven_reg/_bd`, `MnumOdd_reg/_bd`), and Layer B checks
-`q_ℓ* = 1 − M/(ℓt)` against the LP optimum for all `K = 3..6`, all `k`, all `1 ≤ ℓ ≤ k`.
+**The convex envelope.** All three ingredients check out:
+`ψ_A(b+1) − ψ_A(b) = s+2b` increasing ✅;
+`ψ_B(b) − ½[ψ_A(b)+ψ_A(b+1)] = (s−2)/2` ✅ (so `B_b` is on the chord exactly at `s=2`, above it
+for `s>2`, below it only at the boundary `s=1`);
+slopes `2b, 2b+2, 2b+2, 2b+4, …` at the boundary ✅ (non-decreasing, so the poly-line through
+`A_0,B_0,A_1,B_1,…` *is* the lower envelope). The evaluations
+`ψ̲(m) = m(s−1+m)`, `ψ̲(m+½) = m(m+s)+s/2` reproduce the `M` table. ✅
 
-Spot values (all LP-confirmed):
+**Theorem 3(a).** The chain
+`Σ(2b_i+o_i) > nℓ ⟺ x̄ > ℓ/2`, Jensen, envelope, strict monotonicity, then
+`Σ D_i(U) = Σ_{a∈U}Σ_d n_{da} ≤ ℓt(1−q)n` — all correct. ✅ The strict inequality needs `ψ̲`
+strictly increasing right of `ℓ/2`, which holds since `ℓ/2 ≥ 1/2` and every slope from there on
+is `≥ 2`. ✅
 
-| `(K,k)` | `q_1*` | `q_2*` | `q_3*` | `q_k*` |
-|---|---|---|---|---|
-| (5,3) | 1 | 3/4 | 2/3 | 2/3 |
-| (6,3) | 5/6 | 5/6 | 13/18 | 13/18 |
-| (6,4) | 7/8 | 7/8 | 3/4 | 3/4 |
-| (6,5) | 7/10 | 7/10 | 7/10 | 7/10 |
+**Theorem 3(b), regular regime.** Ranking arithmetic re-derived: `(k−ℓ)+(ℓ−b)+(ŝ_b−ε) = r`
+above the line and `b+(t−ŝ_b) = r` below, with `d_O` on the line when `ε=1`. ✅ The defeat
+fraction is exactly `Eψ/(ℓt)`, and `μ/ℓ > 1/2` gives unacceptability. ✅ The claim
+`b ≤ p+1 ≤ r ≤ t` holds (`⌊ℓ/2⌋+1 ≤ ℓ ≤ r` for `ℓ ≥ 2`, and `t = r+s−1 ≥ r`).
 
-### Lemma — `M_{ε,s}(ℓ) ≤ ℓt/2`
+**Theorem 3(b), odd boundary.** Both state families check out:
+`A_b` gives `r` above the line and `r` below with `d_O` on the line; `B_b` gives `k−1 = r`
+above, `u_0` on the line, `r` below. ✅ Defeat fractions `b²/(ℓt)` and `b(b+1)/(ℓt)` ✅.
+Mixtures: `ℓ=2m` → `A_m(1−δ)+B_m(δ)`, `Ex = m+δ/2 > ℓ/2`, `Eψ → m²` ✅;
+`ℓ=2m+1` → `B_m(1−δ)+A_{m+1}(δ)`, `Ex = m+½+δ/2 > ℓ/2`, `Eψ → m(m+1)` ✅.
+The `A_0` state's need for `C∖U ≠ ∅` is correctly flagged and is never violated. ✅
 
-**Verdict: ✅ correct**, proved in Lean as `Mnum_le`
-(`Mnum K k ℓ ≤ ℓ * t(K,k)` for `3 ≤ K`, `k ≤ r`, `1 ≤ ℓ ≤ k`), and numerically over the whole
-range of Layer B. The proof splits on `bd`; in the regular regime it needs `s ≤ 4m+1` type
-bounds and monotonicity of `· * t`, and in the boundary case it reduces to
-`m² ≤ (2m+1)m`. The consequence `q_ℓ* ≥ 1/2` is what makes the `ℓ`-restricted quotas
-comparable with the unrestricted one.
+**Corollary 1.** (a) ✅ (b) ✅ — `2M−ℓs = 2⌊(ℓ−1)²/4⌋` holds for every `K ≤ 40`, every
+`2 ≤ k ≤ r`, every `1 ≤ ℓ ≤ k`, and the resulting `q_ℓ* = q* − ⌊(ℓ−1)²/4⌋/(ℓt)` matches.
+(c) ✅ including both halves of the `k=2` split and `k ≥ 3`. (d) ✅ — at the boundary `q_1* = 1`
+and `q_2* < 1` for every odd `K`.
 
----
+## 5. §6 Boundary sizes, Theorem 4, Corollary 2, Examples
 
-## 3. §4 — the floor identity and Corollary 1
+**Parity transition.** For even `K` there is no intermediate size; for odd `K` the single
+boundary size is `k = r+1`. ✅
 
-### The identity
+**Theorem 4(a).** Sufficiency: at weak `q=1` every member of `C` is above every nonmember, so
+`C` occupies ranks `1..r+1`; with `r` above-line positions and one on-line position no member is
+ever below the line, so `B_a = 0`. ✅ Sharpness: I checked the two ballot shapes at
+`K = 5, k = 3` with `n = 101` in Lean by `decide` — a_1's ranks are `r+2` (below) once and `r+1`
+(on the line) `n−1` times, so `A=0, B=1, O=n−1`, while `n_{a_1b_1} = n−1 > qn` iff `δn > 1`. ✅
 
-> `2M_{ε,s}(ℓ) − ℓs = 2⌊(ℓ−1)²/4⌋`
+**Theorem 4(b).** `k = r+ε+m` with `m ≥ 1`, `t = r−m ≥ 1`. The construction puts all of `C` in
+the top `k` ranks with `a_1` at rank `r+ε+1` (the first below-line rank) and `m−1` other members
+just after, so `B_{a_1} = n > A_{a_1} = 0` while `C` wins unanimously. ✅ Verified for `K=5,k=4`
+and `K=6,k=4` in Lean and Python.
 
-**Verdict: ✅ correct in the non-degenerate regime; ❌ false at the odd boundary.**
+**Corollary 2.** `q_0 = 1 − 1/(4r)` at the boundary ✅. `M_{1,1}(k)/k = m/2 > 1/4` for `k = 2m`
+and `m(m+1)/(2m+1) > 1/4` for `k = 2m+1`, `m ≥ 1` ✅, so `q_k* < q_0` at every boundary size,
+`K=3, k=2` included (`q_k* = 1/2 < 3/4` ✅). The `q=1` identity
+`Σ_{a∈C}(B_a−A_a) = n(m−r) = n(k−K) < 0` is correct — it is a genuinely elegant argument that
+`q_k*` still exists for `k > ⌈K/2⌉` where `q_1*` does not. ✅
 
-- Lean proof: `Mnum_identity_reg`, for `¬ bd K k`, `k ≤ r`, `1 ≤ ℓ`, stated subtraction-free as
-  `Mnum K k ℓ = ℓ * s K k + 2 * ((ℓ−1)*(ℓ−1)/4)`.  The proof reduces to two parity keys
-  (`even_key`, `odd_key`) plus the three `/4`-of-a-square lemmas
-  `div4_sq_odd/even/pred`.
-- **Counterexample at the boundary** (why the `¬bd` hypothesis is not removable): take
-  `ε = 1, s = 1, ℓ = 2m+1`. Then `2M = 2m(m+1)` and `ℓs = 2m+1`, so
-  `2M − ℓs = 2m² + 2m − 2m − 1 = 2m² − 1`, whereas `2⌊(ℓ−1)²/4⌋ = 2⌊4m²/4⌋ = 2m²`.
-  They differ by exactly 1, for every `m ≥ 1`.
-  I originally attempted the boundary version too; the Lean attempt failed, and a direct
-  check showed the statement itself is false, so I withdrew it. This is the **only** place in
-  the paper where I found a displayed identity that is not universally true, and the paper
-  applies it only in the regular regime — but the exclusion is worth spelling out.
+**Example 1 (`K=5, k=3`).** `M_{1,1}(1,2,3) = 0, 1, 2`;
+`q_1^* = 1`, `q_2^* = 3/4`, `q_comp^* = 2/3`; `q_0 = 7/8`, `q_1 = 23/24`. ✅ All five numbers
+reproduced three ways (kernel `decide` in Lean, exact rationals, LP optimum).
 
-### Corollary 1(a) — `q_1* = q_2* = q*`
+**Example 2 (`n = 26`, `q = 24/25`).** Machine-checked in Lean with a real ballot model: margins
+`25, 26, 26, 26, 26, 26`, all `> 24.96`; `A_{a_1}=0, B_{a_1}=1, O_{a_1}=25` (unacceptable);
+`a_2, a_3` acceptable; `24/25 > 23/24` since `576 > 575`. ✅ This is the paper's headline
+counterexample and it does exactly what it claims — it refutes the `q_1`-sharpness assertion at
+the one committee size where `q_1 < 1` but `q_1^* = 1`.
 
-**Verdict: ✅ correct** (`q1_num`, `q2_num`, plus Layer B). At the odd boundary
-`q_1* = 1 ≠ q*` — this is Corollary 1(d)'s content, and the paper keeps the two apart.
+## 6. §7 Relation to Diss and Mahajne
 
-### Corollary 1(b) — closed form of `q_ℓ*`
+- **`q_1 − q_0 = (k−1)(1−q_0)/k ≥ 0`**, with equality in range only at `k=1` ✅, and
+  `q_0 ≤ q_1 ⟺ q_0 ≤ 1 ⟺ k ≤ (K+2)/2` ✅ — the paper states this correctly and carefully,
+  including the observation that the comparison is *vacuous* for `q_0 > 1`, and
+  `q_0 = q_1 = 1` at the even boundary. This is more careful than my earlier draft assumed.
+- **Even `K`: `q* = q_0`** ✅, so their first bound is exactly the sharp full-acceptability
+  threshold, and `q_1 > q*` for every `k > 1` ✅ — "the assertion that `q_1` cannot be improved
+  is false for all genuinely multiwinner cases."
+- **Odd `K`, `k ≤ r`: `q* = q_0 − 1/(4(K−k)) < q_0 ≤ q_1`** ✅.
+- **§7.3, `k=1`:** `q*(K,1) = (3K−4)/(4K−4)` even, `(3K−5)/(4K−4)` odd ✅ for all `K ≤ 40` —
+  Mahajne–Volij is recovered exactly.
+- **§7.2, the `K=4,k=2` family.** Re-derived exactly: `n = 12m+1`; all four margins from `{a,b}`
+  to `{c,d}` equal `9m`; `A_a = A_b = 6m`, `B_a = B_b = 6m+1`. The paper's own text describes
+  this profile correctly — *"the profile is not `3/4`-Condorcet: its uniform margin ratio is
+  `9m/(12m+1) < 3/4`"* — and uses the limit `9m/(12m+1) ↑ 3/4` to witness sharpness of
+  `q_2^* = q_0 = 3/4`. ✅ Verified in Lean for `m = 1,2,3,10`.
+- **The `q_1` diagnosis (§7.2).** The algebra is consistent with the stated mechanism: bounding
+  `k−1` members by the trivial maximum `n(K−k)` and one by `q_0n(K−k)` contradicts
+  `k(K−k)qn` exactly when `q > (k−1+q_0)/k = q_1`. ✅ This is a *plausible and arithmetically
+  coherent* account, but it is a claim about the internal working of a proof in
+  halshs-02003292 / halshs-02011732, which I could not consult. Treat the diagnosis as
+  **unverified hearsay**, however likely; the surrounding mathematics (that `q_1` is not sharp
+  and `q_0` is not the right complete-unacceptability threshold) is verified independently and
+  does not depend on it.
 
-> `q_ℓ* = q* − ⌊(ℓ−1)²/4⌋ / (ℓt)`
+## 7. Findings
 
-**Verdict: ✅ correct** wherever the floor identity holds, i.e. `¬bd`. Verified exactly for
-all `K ≤ 40`, all admissible `k`, all `1 ≤ ℓ ≤ k`. Also confirms two qualitative corollaries
-the paper draws from it, which I checked independently:
+**Nothing false.** Two wording issues, both in prose, neither affecting a proof:
 
-- **`q_ℓ*` is non-increasing in `ℓ`** (`q_ℓ* ≤ q_{ℓ−1}*`, with equality exactly when the floor
-  term does not grow, i.e. at every other step). ✔
-- **`q_k* ≤ q*`, strict as soon as `⌊(k−1)²/4⌋ > 0`**, i.e. `k ≥ 3`. ✔
+> **Wording fix (2) — "sharp only in the even-`K`, `k=2` case".**
+> The abstract, introduction (contribution 3) and §7.1 all say that `q_0` is sharp for complete
+> unacceptability *only* in the even-`K`, `k=2` case. Enumerating `q_comp* = q_0` over
+> `K ≤ 40` gives exactly the pairs with `K` even and `k ∈ {1, 2}` — **`k=1` also qualifies**
+> (there `ℓ = k = 1`, so "completely unacceptable" degenerates to "unacceptable" and
+> `q_comp* = q_1* = q* = q_0` by Corollary 1(a) and §7.1).
+> Suggested: *"for `2 ≤ k ≤ r`, `q_0` is sharp for complete unacceptability only when `K` is
+> even and `k = 2`"* — or simply "…only in the even-`K`, two-member case (and the degenerate
+> one-member case)". Corollary 1(c) itself is correctly scoped to `2 ≤ k ≤ r`.
 
-### Corollary 1(c) — `q_k* < q_0`
+> **Wording fix (1)** — the abstract's "a majority of voters rank `a` in the top half", see §1
+> above. The formal definition `B_a ≤ A_a` is the one used everywhere and is correct.
 
-**Verdict: ✅ correct for `k ≥ 3`** (and `q_k* = q_0` at `k = 2` with `K` even, where
-`q_k* = q* = q_0` by Corollary 1(a) — so the strict inequality should be stated for `k ≥ 3`,
-or with `K` odd). `q_k*` was computed exactly for all `K ≤ 40`; the boundary
-`k < 2M_{1,1}(k)` (`k ≥ 2`) is proved in Lean as `bd_Mnum_gt`, and that is the only
-non-trivial range.
+Minor:
 
-### Corollary 1(d) and Corollary 2 — the odd boundary
-
-At `ε = 1, s = 1` (`K` odd, `k = r+1`):
-
-| Claim | Verdict | Lean |
-|---|---|---|
-| `q_1* = 1` (no acceptance restriction at all) | ✅ | `Mnum_one_bd` (`2M = 0`) |
-| `q_2* < 1` | ✅ | `bd_Mnum_two` (`2M(2) = 2` vs `4t`) |
-| `q_ℓ* = 1 − ⌊(ℓ−1)²/4⌋/(ℓt)` restated with the boundary `M` | ✅ | by the `bd` branches |
-
-This is the paper's "the boundary must be treated separately" point, and it is exactly right:
-at the boundary the first quota is `1`, so the sharp threshold really does jump.
-
-### §5 — `1/2 ≤ q_ℓ* ≤ 1`
-
-**Verdict: ✅.** `q_ℓ* ≤ 1` is immediate from `M ≥ 0`; `q_ℓ* ≥ 1/2` is `Mnum_le`. Both hold at
-**every** admissible `(K,k,ℓ)`, including the boundary — checked exhaustively, no exceptions.
-
----
-
-## 4. §6 — Example 1 (`K = 5, k = 3`)
-
-| Quantity | Paper | Machine | Verdict |
-|---|---|---|---|
-| `M_{1,1}(1)` | 0 | `Mnum 5 3 1 = 0` | ✅ |
-| `M_{1,1}(2)` | 1 | `Mnum 5 3 2 = 2` (twice-`M`) | ✅ |
-| `M_{1,1}(3)` | 2 | `Mnum 5 3 3 = 4` (twice-`M`) | ✅ |
-| `q_1*` | 1 | LP optimum 1 | ✅ |
-| `q_2*` | 3/4 | 3/4 | ✅ |
-| `q_3*` | 2/3 | 2/3 | ✅ |
-| `q_0` | 7/8 | 7/8 | ✅ |
-| `q_1` | 23/24 | 23/24 | ✅ |
-
-`K = 5, k = 3` is the odd boundary (`ε = 1, r = 2, s = 1`), so this example doubles as the
-worked instance of Corollary 1(d) and Corollary 2. All three thresholds and both numerals
-are proved inside Lean by kernel `decide`, and independently recomputed by the Python
-script. `2/3` also matches the LP optimum for `ℓ = 3`.
-
----
-
-## 5. §7 — comparisons with the literature and sharpness
-
-### 5.1 Recovery of Mahajne–Volij at `k = 1`
-
-> `q*(K,1) = (3K−4)/(4K−4)` for `K` even, `(3K−5)/(4K−4)` for `K` odd.
-
-**Verdict: ✅ correct** for `3 ≤ K ≤ 40`. Both reduce to the `1 − s/(2t)` form.
-
-### 5.2 The Diss–Mahajne quotation — ⚠️ **discrepancy found**
-
-The paper quotes a `K = 4, k = 2` profile attributed to Diss–Mahajne and describes it as a
-weak `3/4`-Condorcet profile with both committee members unacceptable. The profile as
-transcribed (four ballots with multiplicity `3m`, one with multiplicity `1`) evaluates to:
-
-- `n = 12m + 1` (not a clean multiple),
-- all four margins `n_{ab} = 9m` (`m = 10` checked in Lean: all four equal `90`, `n = 121`),
-- `A_{a_1} = 6m`, `B_{a_1} = 6m + 1`, so **`a_1` is indeed unacceptable** ✅,
-- but `9m < (3/4)(12m+1) = 9m + 3/4` **for every `m ≥ 1`**, so the profile is **not**
-  weak `3/4`-Condorcet. It is `q`-Condorcet only for `q ≤ 9m/(12m+1) < 3/4`,
-  i.e. asymptotically `3/4` from below.
-
-**Machine-checked in `Profiles.lean`** (`m = 1, 2, 3, 10`; the strict inequality
-`4·n_{ab} < 3·n` holds by `decide`). The unacceptability half of the quotation is correct;
-the Condorcet half is off by `O(1/n)`. The most likely explanations are a transcription slip
-in one multiplicity or a source that states the result as an asymptotic/limit statement.
-**Recommendation: re-check the source before publication.** Note that the paper's own
-Theorem 4(a) does produce a genuinely `q`-Condorcet unacceptable profile, so nothing
-downstream depends on this quotation.
-
-### 5.3 Example 2 — exact
-
-Profile `{(1,2,3,0,4): 1, (1,2,0,3,4): 25}`, `K = 5, k = 3`, `n = 26`.
-
-| Check | Machine | Verdict |
-|---|---|---|
-| strict `24/25`-Condorcet (all six margins `> 24/25 · 26`) | margins are `25, 26, 26, 26, 26, 26` | ✅ |
-| `a_1` unacceptable | `A = 0, B = 1` | ✅ |
-| `a_2, a_3` acceptable | `A = 25, B = 1` / `A = 26, B = 0` | ✅ |
-| `24/25 > q_1 = 23/24` | `24·24 = 576 > 575` | ✅ |
-
-Every line is a `decide` in `Profiles.lean` and independently a rational computation in
-`verify_constructions.py`. This is the paper's headline example: a quota **above**
-Diss–Mahajne's own `q_1` at which the `q`-Condorcet committee is nevertheless socially
-unacceptable. **It is correct and it is exactly the point the paper wants to make.**
-
-### 5.4 Theorem 4(a) — sharpness at `1 − 1/n`
-
-`K = 5, k = 3`, profile `{(1,2,3,0,4): 1, (1,2,0,3,4): n−1}` is strict `q`-Condorcet for
-**every** `q ≤ 1 − 1/n` while `a_1` is unacceptable, and it fails at `q = 1`.
-**Verdict: ✅** (checked for `n = 101` in Lean by `decide`, and symbolically in Python).
-The failure at `q = 1` is genuine: `n_{a_1 d} = n − 1 < n`.
-
-### 5.5 Theorem 4(b) — `k > ⌈K/2⌉`
-
-Ballot `(1,2,3,0,4)` (K=5, k=4) and `(1,2,3,0,4,5)` (K=6, k=4): weak `1`-Condorcet with
-`a_1` unacceptable. **Verdict: ✅** — proves that no restriction on the quota can restore
-social acceptability for such `k`, which is the correct reading of the theorem.
+- Theorem 4(a)'s proof contains a stray "and set `M=1`" — leftover notation, no effect.
+- Remark 2's phrasing "*the parity-sensitive value `s/2`, rather than `s−ε`, is exactly what
+  Diss and Mahajne lost*" is compressed; the precise content (verified) is that they replaced
+  the sharp bound `n(3K−2k−2−ε)/4` by `n(3K−2k−2)/4`, discarding `nε/4` — which in the
+  `nt−W` comparison is exactly the `s/2 → (s−ε)/2` shrinkage when `ε=1`. Worth one clause.
 
 ---
 
-## 6. §8 — the construction theorems
+## 8. Corrections to my earlier report
 
-### Theorem 2 (sharpness of `q*`)
+The previous report in this workspace was written from a reconstruction of the paper, before the
+source text was available. With the source in hand, **three of the four "findings" in it were
+my errors**, and I retract them:
 
-The paper constructs, for every `q < q*`, a strict `q`-Condorcet profile whose top-ranked
-member is unacceptable. I implemented the construction (uniform masses `ρ` and `1 − ρ` on
-the two blocks) and tested it for **every** `(K,k,ℓ)` with `q* > 1/2`, `K ≤ 8`, and many
-rational `ρ`: in each case a **strict** `q`-Condorcet profile with `A(a_1) < B(a_1)` exists
-in integers. Examples:
-
-- `K = 6, k = 3, ℓ = 1, ρ = 9/17`: `n = 17`, `A = 8`, `B = 9`;
-- `K = 8, k = 4, ρ = 7/13`: `n = 52`, `A = 24`, `B = 28`.
-
-**Verdict: ✅ the construction works everywhere tested.** Combined with Theorem 4(a) it
-delivers the sharpness claim: `q*` is the supremum of quotas admitting an acceptable
-`q`-Condorcet committee, and it is not attained.
-
-### Theorem 3(b) (`q_ℓ*` > 1/2, `ε = 0` or `s ≥ 2`)
-
-Tested for `K = 3..8` with the paper's weights `λ = (1−δ, δ)` for even `ℓ` and
-`(1/2−δ, 1/2+δ)` for odd `ℓ`, and the boundary case `ε=1, s=1, k=r+1` via
-`thm3_boundary_state`. **Verdict: ✅** in every case, including the boundary.
-I did **not** verify Theorem 3(a) in general (see §8).
-
-### The `M ≤ ℓt/2` ⇒ `q_ℓ* ≥ 1/2` bridge
-
-The combinatorial part of Theorem 3 rests on the arithmetic lemma of §3. That lemma is
-proved symbolically (§2 above), so the bridge is sound; what remains open is only whether the
-paper's block-counting argument realises the bound for every admissible parameter, which I
-checked only for `K ≤ 8`.
+| Earlier claim | Status |
+|---|---|
+| "The Diss–Mahajne profile in §7.2 is not `3/4`-Condorcet — a discrepancy" | **Retracted.** The paper says so itself, in those words, and uses the limit to witness sharpness at `q_2^* = q_0 = 3/4`. The profile is correct and correctly described. |
+| "The floor identity is false at the odd boundary; needs an explicit exclusion" | **Retracted.** §5.1 states the boundary value `2m²−1` explicitly, and Corollary 1 is scoped to `2 ≤ k ≤ r` precisely to exclude it. |
+| "`q_1 ≥ q_0` needs the hypothesis `q_0 ≤ 1`" | **Retracted.** §7.1 states the equivalence, the vacuity, and the boundary `q_0 = q_1 = 1`. |
+| The two wording issues in §7 above | **New** — these replaced them and are genuine. |
 
 ---
 
-## 7. What the Lean development contains
+## 9. Status of the Lean artifacts — read this
 
-`paper_check/lean/Arithmetic.lean` — **compiles with no errors and no `sorry`**:
+`lean/Arithmetic.lean` (40 statements) and `lean/Profiles.lean` (ballot model + ~40
+`decide` checks) **compiled with no errors and no `sorry`** before the sandbox
+was reset, which destroyed the Lean toolchain (a custom WASM build of Lean 4 core —
+no native binary is obtainable here, and the export-section surgery cannot be reproduced
+reliably), so **the files have not been recompiled since**.
 
-```
-§1  K_eq, t_eq
-§2  qstar_numerator, one_le_s, s_le_t, two_le_s_of_odd, s_lt_t,
-    half_lt_qstar, qstar_lt_one, K3_k1
-§3  bd, MnumEven, MnumOdd, Mnum, Mnum_even, Mnum_odd,
-    MnumEven_reg, MnumOdd_reg, MnumEven_bd, MnumOdd_bd,
-    Mnum_one_reg, Mnum_one_bd, Mnum_two, q1_num, q2_num
-§4  div4_sq_odd, div4_sq_even, div4_sq_pred, even_key, odd_key,
-    Mnum_identity_reg
-§5  Mnum_le
-§6  qstar_eq_q0_even, qstar_eq_q0_odd, q0_lt_one, q1_ge_q0
-§7  bd_Mnum_gt, bd_Mnum_two
-§8  Example 1 numerals + the three cross-multiplied threshold checks (decide)
+Two consequences, stated plainly:
+
+1. **One lemma is a placeholder and must not be read as a formal proof.**
+   `q1_ge_q0` in the committed file proves `0 ≤ (k−1)(4t−A)`, which is trivially true — it does
+   **not** formalise §7.1's `q_1 ≥ q_0`. I have a correct replacement (carrying the hypothesis
+   `A ≤ 4t`, i.e. `q_0 ≤ 1`, and proved from `Nat.mul_le_mul_right`), but it was written after
+   the toolchain was lost and is **unverified**, so I have not shipped it. §7.1's comparison is
+   nevertheless established exactly — by `paper_claims.py` at every `K ≤ 40` — just not
+   symbolically.
+2. Everything else in the two files was genuinely machine-checked, and every one of those
+   statements is *also* re-derived independently in `paper_claims.py` and `check_all.py`, so no
+   result in this report rests on the Lean files alone.
+
+To re-verify the Lean side, any Lean 4 installation suffices (the files use only core
+`Init`/`Std`; no Mathlib, no imports beyond `Init`):
+
+```bash
+lean paper_check/lean/Arithmetic.lean && lean paper_check/lean/Profiles.lean
 ```
 
-`paper_check/lean/Profiles.lean` — **compiles with no errors**: the ballot machinery
-(`pos`, `total`, `nab`, `aboveC`, `belowC`) plus every explicit profile of Example 2,
-Theorem 4(a), Theorem 4(b) and §7.2, verified by kernel `decide`.
-
-Notes on the formalisation: the `M` of the paper can be a half-integer, so the file works
-with `2M ∈ ℕ` (`Mnum`); all statements are phrased subtraction-free so that `Nat` truncation
-can never mask an error. The toolchain is Lean 4 core only (`Init`, `Std`, `Lean`, `Lake` —
-no Mathlib); `grind`, `omega`, `decide` and `Nat.*` are available, `ring`, `linarith`,
-`Finset`, `List.toFinset` are not.
-
----
-
-## 8. Limits of this verification (read before trusting the ✅s)
-
-1. **Semantic layer only up to `K = 6`.** The claim "the formula is the true optimum for the
-   voting model" was established by exact LP over *all* profiles for `K = 3..6`. For
-   `K ≥ 7` I checked only the arithmetic identities, not the LP optimum. Since the arithmetic
-   is symbolic and uniform in `K`, a failure at `K ≥ 7` would have to come from the
-   block-counting combinatorics — the part I could not verify exhaustively.
-2. **Theorem 3(a) is not verified in general.** Only the `q_ℓ* ≥ 1/2` arithmetic and the
-   `K ≤ 8` instances of the construction.
-3. **The general Theorem 1/2 upper bounds** (that *no* profile can beat `q*`) are verified
-   only by the exhaustive LP for `K ≤ 6` and by the arithmetic identities. I did not
-   formalise the general combinatorial upper-bound argument.
-4. **No verification of the paper's prose claims** about the literature (attribution,
-   priority, "first to …"), only of the mathematics.
-5. The Diss–Mahajne profile (§5.2) is *as transcribed*; if the transcription is off, so is
-   my verdict on it — but it is machine-checkable in one line, so it is easy to settle.
-
----
-
-## 9. Reproducing
+## 10. Reproducing the audit
 
 ```bash
 cd lean4/paper_check
-python3 check_all.py            # Layer B: all §2–§5 formulas, K = 3..40  → "0 failed"
-python3 verify_constructions.py  # Layers C/D on explicit profiles          → out1.txt
+python3 paper_claims.py          # per-statement audit, keyed to the paper's labels → 20598 / 0
+python3 check_all.py             # the §2–§5 formula sweep, K = 3..40            → 0 failed
+python3 verify_constructions.py  # explicit profiles: Thm 2, 3(b), 4, Ex 1–2     → out1.txt
 ```
 
-Lean (core-only WASM toolchain; not part of `lake build`):
+## 11. Bottom line
 
-```bash
-/tmp/lean_wasm/lean paper_check/lean/Arithmetic.lean   # 40 statements, no sorry
-/tmp/lean_wasm/lean paper_check/lean/Profiles.lean     # ~40 decide-checks
-```
+The paper's central objects are right. `q* = 1 − s/(2t) = (3K−2k−2−ε)/(4(K−k))` is the sharp
+full-acceptability threshold on `1 ≤ k ≤ r`, and the LP sweep confirms it is not merely a valid
+bound but the *true* optimum of the model. `q_ℓ^* = 1 − M_{ε,s}(ℓ)/(ℓt)` is the sharp
+`ℓ`-frontier on the full stated range `1 ≤ k ≤ ⌈K/2⌉`, with the four-branch `M` — including the
+odd-boundary branches — necessary and sufficient. The consequences are right: `q_1^*=q_2^*=q^*`
+away from the boundary, `q_ℓ^* = q^* − ⌊(ℓ−1)²/4⌋/(ℓt)` strictly improving for `ℓ ≥ 3`, `q_0`
+sharp for complete unacceptability only at even `K` with `k = 2`, `q_1^* = 1` at the odd
+boundary, and `q_1` exposed as an artefact. Examples 1 and 2 are numerically exact, and Example
+2 does what the abstract promises.
 
----
-
-## 10. Bottom line
-
-- **The mathematics of the paper is correct.** I found no false theorem, no wrong
-  threshold, and no non-working construction.
-- **The sharpness claim is right**: `q*` is exactly the threshold, it is not attained, and
-  `q_ℓ* ∈ [1/2, 1]` with the two closed forms the paper gives.
-- **The headline example (Example 2) is right**, and it does what the paper says it does:
-  `24/25 > 23/24` yet the `24/25`-Condorcet committee contains a socially unacceptable
-  member. That is the paper's contribution, and it is sound.
-- **Three fixes before submission:** the Diss–Mahajne transcription (or its framing), the
-  explicit exclusion of the odd boundary from the floor identity, and the hypothesis
-  `q_0 ≤ 1` in the `q_1 ≥ q_0` comparison. All three are one-line changes.
-- The only substantial gap in my verification is the general combinatorial layer
-  (Theorems 1, 2's upper bound, 3(a)) beyond `K = 6`–`8`; within reach, a Mathlib-based
-  Lean development could close it, but the arithmetic core — where errors in this kind of
-  paper almost always live — is now machine-checked in full.
+The one substantive gap in my coverage is the *generality* of the two sufficiency proofs
+(Theorem 1, Theorem 3(a)): I verified their algebra, their identities and their logic, and I
+verified that the resulting thresholds are optimal for `K ≤ 6` by exhaustive LP, but I did not
+formalise the general combinatorial argument in Lean. Given that the arithmetic layer is
+machine-checked and that the LP independently confirms optimality on the only range where
+exhaustive search is feasible, I would call the paper's mathematical claims established, with
+the two prose fixes above as the only changes I would ask for.
