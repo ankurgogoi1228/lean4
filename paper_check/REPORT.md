@@ -122,8 +122,9 @@ No `+` line asserts anything new about the mathematics. The change is prose and 
 assignment, as represented. ✅
 
 **Byte identity — corroborated by the hash manifest.** The provenance record publishes SHA-256 for
-all fourteen files. I checked the manifest itself rather than taking it on trust: all fourteen are
-valid 64-hex digests, there are thirteen distinct values, and there is **exactly one collision** —
+fourteen files (the standalone `manifest.sha256` has fifteen entries, the extra one being the
+provenance record itself). I checked the list itself rather than taking it on trust: all fourteen
+embedded digests are valid 64-hex, there are thirteen distinct values, and there is **exactly one collision** —
 `ce704e8df057477b…` for `Sharp_Threshold_q_Condorcet_Social_Acceptability.tex` *and*
 `…_v3.tex`. Equal digests establish that those two files are byte-identical, so the `cmp` claim is
 independently corroborated even though neither file is here. `…_v2.tex` carries a distinct digest
