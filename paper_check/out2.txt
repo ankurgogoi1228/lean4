@@ -1,0 +1,2 @@
+number of failed assertions: 0
+OK

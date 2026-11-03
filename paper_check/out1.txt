@@ -1,0 +1,90 @@
+==== Theorem 2 (sharpness, ell = 1) ====
+   K=4 k=1: q=197/300 (< q*=2/3), rho=18/35, n=35, A(a1)=17 B(a1)=18  -> strict q-Condorcet, a1 unacceptable  OK
+   K=4 k=2: q=37/50 (< q*=3/4), rho=14/27, n=27, A(a1)=13 B(a1)=14  -> strict q-Condorcet, a1 unacceptable  OK
+   K=5 k=1: q=123/200 (< q*=5/8), rho=20/39, n=117, A(a1)=57 B(a1)=60  -> strict q-Condorcet, a1 unacceptable  OK
+   K=5 k=2: q=197/300 (< q*=2/3), rho=18/35, n=35, A(a1)=17 B(a1)=18  -> strict q-Condorcet, a1 unacceptable  OK
+   K=6 k=1: q=69/100 (< q*=7/10), rho=16/31, n=155, A(a1)=75 B(a1)=80  -> strict q-Condorcet, a1 unacceptable  OK
+   K=6 k=2: q=37/50 (< q*=3/4), rho=14/27, n=81, A(a1)=39 B(a1)=42  -> strict q-Condorcet, a1 unacceptable  OK
+   K=6 k=3: q=247/300 (< q*=5/6), rho=9/17, n=17, A(a1)=8 B(a1)=9  -> strict q-Condorcet, a1 unacceptable  OK
+   K=7 k=1: q=197/300 (< q*=2/3), rho=18/35, n=350, A(a1)=170 B(a1)=180  -> strict q-Condorcet, a1 unacceptable  OK
+   K=7 k=2: q=69/100 (< q*=7/10), rho=16/31, n=465, A(a1)=225 B(a1)=240  -> strict q-Condorcet, a1 unacceptable  OK
+   K=7 k=3: q=37/50 (< q*=3/4), rho=14/27, n=162, A(a1)=78 B(a1)=84  -> strict q-Condorcet, a1 unacceptable  OK
+   K=8 k=1: q=493/700 (< q*=5/7), rho=15/29, n=203, A(a1)=98 B(a1)=105  -> strict q-Condorcet, a1 unacceptable  OK
+   K=8 k=2: q=37/50 (< q*=3/4), rho=14/27, n=270, A(a1)=130 B(a1)=140  -> strict q-Condorcet, a1 unacceptable  OK
+   K=8 k=3: q=79/100 (< q*=4/5), rho=11/21, n=210, A(a1)=100 B(a1)=110  -> strict q-Condorcet, a1 unacceptable  OK
+   K=8 k=4: q=173/200 (< q*=7/8), rho=7/13, n=52, A(a1)=24 B(a1)=28  -> strict q-Condorcet, a1 unacceptable  OK
+   K=9 k=1: q=271/400 (< q*=11/16), rho=17/33, n=9240, A(a1)=4480 B(a1)=4760  -> strict q-Condorcet, a1 unacceptable  OK
+   K=9 k=2: q=493/700 (< q*=5/7), rho=15/29, n=812, A(a1)=392 B(a1)=420  -> strict q-Condorcet, a1 unacceptable  OK
+   K=9 k=3: q=37/50 (< q*=3/4), rho=14/27, n=810, A(a1)=390 B(a1)=420  -> strict q-Condorcet, a1 unacceptable  OK
+   K=9 k=4: q=79/100 (< q*=4/5), rho=11/21, n=420, A(a1)=200 B(a1)=220  -> strict q-Condorcet, a1 unacceptable  OK
+Theorem 2 constructions all verified: True
+
+==== Theorem 3(b) constructions ====
+   K=3 k=1 ell=1: q*=1/2 -> sharpness statement is vacuous
+   K=3 k=2 ell=1: q=99/100 (< q*=1), param=1/101, n=101  -> OK
+   K=3 k=2 ell=2: q*=1/2 -> sharpness statement is vacuous
+   K=4 k=1 ell=1: q=197/300 (< q*=2/3), param=(Fraction(65, 134), Fraction(69, 134)), n=402  -> OK
+   K=4 k=2 ell=1: q=37/50 (< q*=3/4), param=(Fraction(49, 102), Fraction(53, 102)), n=204  -> OK
+   K=4 k=2 ell=2: q=37/50 (< q*=3/4), param=(Fraction(75, 76), Fraction(1, 76)), n=304  -> OK
+   K=5 k=1 ell=1: q=123/200 (< q*=5/8), param=(Fraction(37, 76), Fraction(39, 76)), n=912  -> OK
+   K=5 k=2 ell=1: q=197/300 (< q*=2/3), param=(Fraction(65, 134), Fraction(69, 134)), n=804  -> OK
+   K=5 k=2 ell=2: q=197/300 (< q*=2/3), param=(Fraction(66, 67), Fraction(1, 67)), n=402  -> OK
+   K=5 k=3 ell=1: q=99/100 (< q*=1), param=1/51, n=102  -> OK
+   K=5 k=3 ell=2: q=37/50 (< q*=3/4), param=1/26, n=104  -> OK
+   K=5 k=3 ell=3: q=197/300 (< q*=2/3), param=1/34, n=408  -> OK
+   K=6 k=1 ell=1: q=69/100 (< q*=7/10), param=(Fraction(59, 122), Fraction(63, 122)), n=1220  -> OK
+   K=6 k=2 ell=1: q=37/50 (< q*=3/4), param=(Fraction(49, 102), Fraction(53, 102)), n=1224  -> OK
+   K=6 k=2 ell=2: q=37/50 (< q*=3/4), param=(Fraction(50, 51), Fraction(1, 51)), n=612  -> OK
+   K=6 k=3 ell=1: q=247/300 (< q*=5/6), param=(Fraction(8, 17), Fraction(9, 17)), n=17  -> OK
+   K=6 k=3 ell=2: q=247/300 (< q*=5/6), param=(Fraction(50, 51), Fraction(1, 51)), n=153  -> OK
+   K=6 k=3 ell=3: q=641/900 (< q*=13/18), param=(Fraction(8, 17), Fraction(9, 17)), n=153  -> OK
+   K=7 k=1 ell=1: q=197/300 (< q*=2/3), param=(Fraction(65, 134), Fraction(69, 134)), n=8040  -> OK
+   K=7 k=2 ell=1: q=69/100 (< q*=7/10), param=(Fraction(59, 122), Fraction(63, 122)), n=2440  -> OK
+   K=7 k=2 ell=2: q=69/100 (< q*=7/10), param=(Fraction(50, 51), Fraction(1, 51)), n=3060  -> OK
+   K=7 k=3 ell=1: q=37/50 (< q*=3/4), param=(Fraction(49, 102), Fraction(53, 102)), n=1224  -> OK
+   K=7 k=3 ell=2: q=37/50 (< q*=3/4), param=(Fraction(50, 51), Fraction(1, 51)), n=612  -> OK
+   K=7 k=3 ell=3: q=197/300 (< q*=2/3), param=(Fraction(8, 17), Fraction(9, 17)), n=612  -> OK
+   K=7 k=4 ell=1: q=99/100 (< q*=1), param=1/34, n=102  -> OK
+   K=7 k=4 ell=2: q=247/300 (< q*=5/6), param=1/17, n=102  -> OK
+   K=7 k=4 ell=3: q=691/900 (< q*=7/9), param=1/23, n=414  -> OK
+   K=7 k=4 ell=4: q=197/300 (< q*=2/3), param=1/17, n=612  -> OK
+   K=8 k=1 ell=1: q=493/700 (< q*=5/7), param=(Fraction(14, 29), Fraction(15, 29)), n=1015  -> OK
+   K=8 k=2 ell=1: q=37/50 (< q*=3/4), param=(Fraction(49, 102), Fraction(53, 102)), n=6120  -> OK
+   K=8 k=2 ell=2: q=37/50 (< q*=3/4), param=(Fraction(41, 42), Fraction(1, 42)), n=5040  -> OK
+   K=8 k=3 ell=1: q=79/100 (< q*=4/5), param=(Fraction(39, 82), Fraction(43, 82)), n=820  -> OK
+   K=8 k=3 ell=2: q=79/100 (< q*=4/5), param=(Fraction(40, 41), Fraction(1, 41)), n=410  -> OK
+   K=8 k=3 ell=3: q=217/300 (< q*=11/15), param=(Fraction(25, 54), Fraction(29, 54)), n=1620  -> OK
+   K=8 k=4 ell=1: q=173/200 (< q*=7/8), param=(Fraction(6, 13), Fraction(7, 13)), n=52  -> OK
+   K=8 k=4 ell=2: q=173/200 (< q*=7/8), param=(Fraction(37, 38), Fraction(1, 38)), n=912  -> OK
+   K=8 k=4 ell=3: q=469/600 (< q*=19/24), param=(Fraction(6, 13), Fraction(7, 13)), n=234  -> OK
+   K=8 k=4 ell=4: q=37/50 (< q*=3/4), param=(Fraction(31, 32), Fraction(1, 32)), n=4608  -> OK
+Theorem 3 constructions all verified: True
+
+Example 1 (K=5,k=3):
+     q_1^*=1  q_2^*=3/4  q_3^*=2/3
+     q0=7/8 (7/8: True), q1=23/24 (23/24: True)
+
+Example 2 (K=5,k=3,n=26,q=24/25):
+  [Example 2] n=26  q-Condorcet(strict) = True
+     A={0: Fraction(0, 1), 1: Fraction(26, 1), 2: Fraction(26, 1)}  B={0: Fraction(1, 1), 1: Fraction(0, 1), 2: Fraction(0, 1)}  O={0: Fraction(25, 1), 1: Fraction(0, 1), 2: Fraction(0, 1)}   unacceptable = [0]
+     q=24/25 > q1=23/24 : True
+     q1 fails as a guarantee of full acceptability: True
+
+Section 7.2 quoted K=4,k=2 profile (n = 12m+1) from Diss-Mahajne:
+  m= 1: n=13  margins={(0, 2): 9, (0, 3): 9, (1, 2): 9, (1, 3): 9}  weak 3/4-Condorcet=False  (need >= 9.750)
+         A={0: 6, 1: 6} B={0: 7, 1: 7}  completely unacceptable=True   profile is q-Condorcet only for q <= 9/13
+  m= 2: n=25  margins={(0, 2): 18, (0, 3): 18, (1, 2): 18, (1, 3): 18}  weak 3/4-Condorcet=False  (need >= 18.750)
+         A={0: 12, 1: 12} B={0: 13, 1: 13}  completely unacceptable=True   profile is q-Condorcet only for q <= 18/25
+  m= 3: n=37  margins={(0, 2): 27, (0, 3): 27, (1, 2): 27, (1, 3): 27}  weak 3/4-Condorcet=False  (need >= 27.750)
+         A={0: 18, 1: 18} B={0: 19, 1: 19}  completely unacceptable=True   profile is q-Condorcet only for q <= 27/37
+  m=10: n=121  margins={(0, 2): 90, (0, 3): 90, (1, 2): 90, (1, 3): 90}  weak 3/4-Condorcet=False  (need >= 90.750)
+         A={0: 60, 1: 60} B={0: 61, 1: 61}  completely unacceptable=True   profile is q-Condorcet only for q <= 90/121
+
+Theorem 4(a) sharpness (K=5,k=3,r=2, n=3):
+     q=99/100: strict q-Condorcet=True, unacceptable=[0], A={0: 0, 1: 101, 2: 101} B={0: 1, 1: 0, 2: 0} O={0: 100, 1: 0, 2: 0}
+     q=999/1000: strict q-Condorcet=True, unacceptable=[0], A={0: 0, 1: 1001, 2: 1001} B={0: 1, 1: 0, 2: 0} O={0: 1000, 1: 0, 2: 0}
+     q=1: strict q-Condorcet=False, unacceptable=[0], A={0: 0, 1: 3, 2: 3} B={0: 1, 1: 0, 2: 0} O={0: 2, 1: 0, 2: 0}
+
+Theorem 4(b) profiles (top-k block, a1 first below the line):
+     K=5 k=4: weak 1-Condorcet=True, unacceptable=[0]
+     K=6 k=4: weak 1-Condorcet=True, unacceptable=[0]
