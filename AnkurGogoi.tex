@@ -1,0 +1,925 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+\usepackage{url}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{array}
+\usepackage{booktabs}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+\newtheorem{example}{Example}
+\newtheorem{remark}{Remark}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\renewcommand{\qedsymbol}{$\square$}
+\newcommand{\cl}[1]{\left\lceil #1\right\rceil}
+\newcommand{\fl}[1]{\left\lfloor #1\right\rfloor}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\DM}{\mathrm{DM}}
+\newcommand{\uw}{\underline{\psi}}
+\setlist[enumerate]{itemsep=2pt,topsep=2pt}
+\begin{document}
+
+\title{How Many Members of a $q$-Condorcet Committee\\ Can Be Socially Unacceptable?\\[4pt]
+\large Exact Thresholds for Every Number of Unacceptable Members, for $k\le\lceil K/2\rceil$,\\ and a Correction to Diss and Mahajne (2020)}
+\author{Ankur Gogoi\\ \small Department of Mathematics, Dibrugarh University}
+\date{}
+\maketitle
+
+\begin{abstract}
+Let $A$ be a set of $K\ge3$ alternatives and let $n$ voters have strict linear orders of $A$. For $q\in[1/2,1]$, a $k$-set $C\subset A$ is a weak $q$-Condorcet committee if, for every nonmember $d$ and every member $a$, at least $qn$ voters prefer $a$ to $d$. A member $a\in C$ is socially acceptable when no more voters place $a$ below the line than above it.
+
+Diss and Mahajne (2020) give two quotas for this setting, $q_0^{\DM}=(3K-2k-2-\eps)/[4(K-k)]$ for excluding a completely unacceptable committee, and a quota $q_1^{\DM}$, strictly larger for $k>1$, for full social acceptability, and assert that both are optimal. We show that on $1\le k\le\fl{K/2}$ the correct full-acceptability quota is $q_0^{\DM}$ itself, so the larger quota is not optimal; and that their full-acceptability statement is false at the odd boundary $k=(K+1)/2$, where the exact quota is weak unanimity, already at $(K,k)=(3,2)$, a size covered by their Proposition~2 and Table~1.
+
+The main result is the frontier for \emph{every} number of unacceptable members. For $\ell\in\{1,\dots,k\}$ let $q_\ell^*(K,k)$ be the least quota guaranteeing that every weak $q$-Condorcet committee of size $k$ has fewer than $\ell$ socially unacceptable members. For $1\le k\le\cl{K/2}$ we prove $q_\ell^*(K,k)=1-M_{\eps,s}(\ell)/[\ell(K-k)]$, where $s=\fl{K/2}-k+1+\eps$ and $M_{\eps,s}(\ell)$ is the value at $\ell/2$ of the lower convex envelope of the state points $\psi_A(b)=b(s-1+b)$ and $\psi_B(b)=(b+1)(s-1+b)$. Sufficiency is a block-counting argument; sharpness is by explicit finite profiles. On $2\le k\le\fl{K/2}$ this gives $q_1^*=q_2^*=q_0^{\DM}$ and, for $3\le\ell\le k$,
+\[
+q_\ell^*(K,k)=q_0^{\DM}-\frac{\fl{(\ell-1)^2/4}}{\ell(K-k)}<q_0^{\DM}.
+\]
+At $\ell=k$ this is the exact threshold for excluding complete unacceptability, which is strictly below $q_0^{\DM}$ for every $3\le k\le\fl{K/2}$: for $K=10$, $k=5$ it is $37/50=0.74$ against $q_0^{\DM}=0.90$.
+\end{abstract}
+\noindent\textbf{Keywords:} $q$-Condorcet committees; social acceptability; qualified majority; exact thresholds; finite combinatorics.
+
+\noindent\textbf{JEL classification:} D71, D72.
+
+\bigskip
+
+\section{Introduction}
+\label{sec:intro}
+
+\subsection{The question, and the two quotas that motivate it}
+
+Mahajne and Volij \cite{MahajneVolij2018} introduced the scoring-rule approach to social acceptability, and Mahajne and Volij \cite{MahajneVolij2019} asked when a Condorcet winner must be ranked above the line, i.e.\ in the top half of a voter's strict ranking. The $q$-majority background comes from Baharad and Nitzan \cite{BaharadNitzan2003}, Courtin, Martin and Moyouwou \cite{CourtinEtAl2015}, and Gehrlein \cite{Gehrlein1985}. Diss and Mahajne \cite{DissMahajne2020} extended the question to Gehrlein-style $q$-Condorcet committees. In the notation of \eqref{eq:DMpar} below, their Proposition~2 states, for $1/2\le q_0^{\DM}\le q_1^{\DM}<1$, that
+
+\begin{enumerate}[label=(\alph*)]
+\item if $q\ge q_0^{\DM}$, then $C$ cannot be completely unacceptable;
+\item if $q\ge q_1^{\DM}$, then $C$ is socially acceptable;
+\item the bounds $q_0^{\DM}$ and $q_1^{\DM}$ are optimal,
+\end{enumerate}
+
+where $\eps=K\bmod 2$ and
+\begin{equation}
+\label{eq:DMpar}
+q_0^{\DM}=
+\begin{cases}
+\dfrac{3K-2k-2}{4(K-k)}, & K \text{ even},\\[8pt]
+\dfrac{3K-2k-3}{4(K-k)}, & K \text{ odd},
+\end{cases}
+\qquad
+q_1^{\DM}=
+\begin{cases}
+\dfrac{3K-2k-2}{4k(K-k)}+\dfrac{k-1}{k}, & K \text{ even},\\[8pt]
+\dfrac{3K-2k-3}{4k(K-k)}+\dfrac{k-1}{k}, & K \text{ odd}.
+\end{cases}
+\end{equation}
+
+Throughout, the statements of \eqref{eq:DMpar} and (a)--(c) are those of the published 2020 article; the proof of (a) and (b) is not printed there but appears in the 2019 GATE working paper \cite{DissMahajne2019}, and where we discuss that proof we say so.
+
+Three observations frame this paper. First, $q_0^{\DM}$ is parity dependent: it carries exactly the $-\eps$ correction that separates the even and odd cases. Second, (c) asserts optimality of both quotas, while the justification in the working paper consists of a single instance, $K=4$, $k=2$, and addresses $q_0^{\DM}$ there (``we focus on $q_0$''), delegating $q_1^{\DM}$ to a footnote asserting a ``similar'' profile. Third, both quotas are attached to endpoints of a trichotomy (acceptable / partly unacceptable / completely unacceptable), although the model itself grades a committee by \emph{how many} of its members are unacceptable --- a point we develop in Section \ref{sec:whyell}.
+
+\subsection{The benchmark, stated exactly}
+
+Put
+\begin{equation}
+\label{eq:Q}
+r=\fl{K/2},\qquad \eps=K\bmod2,\qquad s=r-k+1+\eps,\qquad t=K-k,
+\qquad Q(K,k)=1-\frac{s}{2t}.
+\end{equation}
+For $1\le k<K$ with $s\ge1$ we have the identity
+\begin{equation}
+\label{eq:identity}
+Q(K,k)=1-\frac{s}{2t}=\frac{2(K-k)-(r-k+1+\eps)}{2(K-k)}=\frac{3K-2k-2-\eps}{4(K-k)}=q_0^{\DM},
+\end{equation}
+since $2t-s=2(K-k)-r+k-1-\eps=2K-k-\frac{K-\eps}{2}-1-\eps=\frac{3K-2k-2-\eps}{2}$. So the number $Q(K,k)$ is Diss and Mahajne's published $q_0^{\DM}$, and at $k=1$ it is Mahajne and Volij's single-winner quota \cite{MahajneVolij2019}. We claim neither as new, and we keep a separate symbol for the algebraic expression because $Q$ denotes a threshold for only part of the range: $Q(K,k)=q_1^*(K,k)$ for $k\le r$, but at the odd boundary $k=r+1$ one has $Q=q_0^{\DM}$ while $q_1^*=1$ (Theorem \ref{thm:boundary}(a)).
+
+What is at issue is which question $q_0^{\DM}$ answers. Diss and Mahajne attach it only to the exclusion of a \emph{completely} unacceptable committee, and attach the quota $q_1^{\DM}$, strictly larger for $k>1$, to full acceptability. Section \ref{sec:full} shows that on
+\begin{equation}
+\label{eq:rangefull}
+1\le k\le r=\fl{K/2}
+\end{equation}
+the quota $q_0^{\DM}$ already forces \emph{every} member to be acceptable, so the larger quota excludes nothing further. The range is $k\le r$, not $k\le\cl{K/2}$: at the odd boundary $k=r+1$ the exact quota is $1$ (Theorem \ref{thm:boundary}(a)), so no statement of the form ``$q_0^{\DM}$ suffices'' can hold there. The proof of the full-acceptability statement is the per-member estimate that Diss and Mahajne derive in the working paper \cite[pp.~8--10]{DissMahajne2019}, compared member by member with the $q$-Condorcet lower bound instead of being summed; our contribution here is at the level of statement, not technique, and we present it as such.
+
+\subsection{Why the number of unacceptable members is the right parameter}
+\label{sec:whyell}
+
+Diss and Mahajne write that ``the selection of a completely unacceptable committee or even a partly unacceptable committee with significant number of socially unacceptable members can be regarded as a severe drawback since a majority of voters may be uncomfortable \dots\ with respect to a significant number of committee members'' \cite[p.~14]{DissMahajne2020}. That is a graded judgement: what matters is how many of the seated members are simultaneously ranked below the line by more voters than rank them above it. Their quota analysis nevertheless prices only the two endpoints.
+
+The present paper prices every point of the scale. For $\ell\in\{1,\dots,k\}$ let $q_\ell^*(K,k)$ be the least quota guaranteeing that every weak $q$-Condorcet committee of size $k$ has \emph{fewer than $\ell$} socially unacceptable members (Definition \ref{def:threshold}). Then $q_1^*$ is the full-acceptability quota and $q_k^*$ is the exact quota for excluding complete unacceptability, and the intermediate values price intermediate guarantees: a designer who can tolerate one unacceptable member but not two needs exactly $q_2^*$. Two features of the answer are worth stating at once. On $k\le r$ the frontier is \emph{flat over its first two steps}, $q_1^*=q_2^*$: tolerating a single unacceptable member buys nothing. And every further step is strictly cheaper, at a rate we compute. At the odd boundary this description changes: there $q_1^*=1>q_2^*$ (Theorem \ref{thm:boundary}(a)), so the flat first step is a feature of $k\le r$ only.
+
+\subsection{Contributions, with their attribution stated}
+\label{sec:contrib}
+
+\begin{enumerate}[label=(\arabic*)]
+\item \textbf{The $\ell$-frontier} (Theorem \ref{thm:hierarchy}, Proposition \ref{prop:normalisation}, Lemma \ref{lem:envelope}). For $K\ge3$, $1\le k\le\cl{K/2}$ and $1\le\ell\le k$,
+\[
+q_\ell^*(K,k)=1-\frac{M_{\eps,s}(\ell)}{\ell\,(K-k)},
+\]
+with $M_{\eps,s}$ the envelope value defined in \eqref{eq:M}. Sufficiency is a block-defeat bound (Lemma \ref{lem:block}) together with a lower convex envelope (Lemma \ref{lem:envelope}); sharpness is by explicit finite profiles. We have not found this frontier in the works cited in this paper; that is the whole of our novelty claim and Section \ref{sec:limits} states its scope.
+\item \textbf{Its shape} (Corollary \ref{cor:hierarchy}). On $2\le k\le r$, $q_1^*=q_2^*=Q(K,k)=q_0^{\DM}$, and for $3\le\ell\le k$,
+\[
+q_\ell^*(K,k)=q_0^{\DM}-\frac{\fl{(\ell-1)^2/4}}{\ell(K-k)}<q_0^{\DM}.
+\]
+The strict decrease is a crowd-out effect: several below-line members of $C$ force additional nonmember defeats, which relaxes the quota. Table \ref{tab:frontier} displays a full frontier.
+\item \textbf{The exact complete-unacceptability threshold} (Corollary \ref{cor:hierarchy}(c)). Setting $\ell=k$ gives $q_k^*=q_0^{\DM}-\fl{(k-1)^2/4}/[k(K-k)]$. Hence on $1\le k\le r$ the quota $q_0^{\DM}$ is the exact complete-unacceptability threshold for $k\in\{1,2\}$ and is strictly larger than it for every $3\le k\le r$. This is where the optimality clause (c) of \cite{DissMahajne2020} fails; the gaps are large, e.g.\ $K=6$, $k=3$: $13/18$ against $5/6$, and $K=10$, $k=5$: $37/50$ against $9/10$.
+\item \textbf{The odd boundary} (Theorem \ref{thm:boundary}, Proposition \ref{prop:boundaryfalse}). For odd $K$ and $k=r+1$ the exact full-acceptability quota is weak unanimity, $q_1^*=1$: every weak $1$-Condorcet committee of that size is socially acceptable, and for every $q<1$ there is a strict $q$-Condorcet committee with an unacceptable member. Hence statement (b) of \cite{DissMahajne2020} is false on this range; the smallest instance is $K=3$, $k=2$, where $q_1^{\DM}=3/4$ (Example \ref{ex:K3}). At the same boundary the exact complete-unacceptability threshold is $q_k^*$, which is strictly below $q_0^{\DM}$ for every $k=r+1\ge3$ and equal to it at $(K,k)=(3,2)$ (Corollary \ref{cor:boundary}).
+\item \textbf{Where $q_1^{\DM}$ comes from} (Section \ref{sec:source}). In the working-paper proof of (b), the improved per-member estimate is applied to one member and the remaining $k-1$ members are bounded by the universal maximum $n(K-k)$; the resulting averaging form $q_1^{\DM}=[q_0^{\DM}+(k-1)]/k$ is visible in the published formula \eqref{eq:DMpar}. We describe this precisely and without the suggestion that it is a new phenomenon.
+\end{enumerate}
+
+\subsection{Attribution and scope}
+\label{sec:attrib}
+
+The definitions of social acceptability, of committee acceptability and of the $q$-Condorcet committee are those of Mahajne and Volij \cite{MahajneVolij2018} and Diss and Mahajne \cite{DissMahajne2019,DissMahajne2020}, following Gehrlein \cite{Gehrlein1985}. By \eqref{eq:identity} the quota $Q=q_0^{\DM}$ is not ours. The per-member counting device in Lemma \ref{lem:single} and Theorem \ref{thm:suff} is in the working paper \cite{DissMahajne2019}; the sym\-metrised $s$-subset construction of Theorem \ref{thm:sharp} is not printed there for general $K$ and $k$, but it is a routine extension of the single-winner construction of \cite{MahajneVolij2019} and we treat it as a service rather than a result. What we claim is the $\ell$-frontier, its corollaries, and the two corrections to the published statements. Section \ref{sec:limits} states the corpus to which that claim is relative.
+
+\subsection{Organisation}
+
+Section \ref{sec:defs} fixes notation. Section \ref{sec:lemmas} records two counting lemmas. Section \ref{sec:full} treats $\ell=1$. Section \ref{sec:hierarchy} proves the $\ell$-frontier. Section \ref{sec:boundary} treats committee sizes at and above the boundary. Section \ref{sec:related} compares with \cite{DissMahajne2020}. Section \ref{sec:conclusion} concludes. Appendix \ref{app:notation} indexes notation.
+
+\section{Definitions and conventions}
+\label{sec:defs}
+
+\subsection{Alternatives, voters and pairwise support}
+
+\begin{definition}[Alternatives, voters and pairwise support]
+\label{def:framework}
+Let $A$ be a finite set with $\#\!A=K\ge3$, let $N=\{1,\dots,n\}$ with $n\ge1$, and let $\pi=(\succ_i)_{i\in N}$ be a profile of strict linear orders on $A$. For $a,b\in A$, write $n_{ab}$ for the number of voters preferring $a$ to $b$, so that $n_{ab}+n_{ba}=n$.
+\end{definition}
+
+Throughout, $C\subseteq A$ is a committee with $\#C=k\ge1$ and $D=A\setminus C$ its complement, with $\#D=t=K-k$. We take $k<K$, so $t\ge1$; the vacuous case $k=K$ is noted in Theorem \ref{thm:boundary}(c).
+
+\subsection{Qualified Condorcet committees}
+
+\begin{definition}[Weak and strict $q$-Condorcet committees]
+\label{def:qcond}
+For $q\in[1/2,1]$, a nonempty $C\subset A$ is a \textbf{weak $q$-Condorcet committee} if
+\[
+n_{ab}\ge qn\qquad\text{for every } a\in C,\ b\in A\setminus C,
+\]
+and a \textbf{strict $q$-Condorcet committee} if $n_{ab}>qn$ for all such pairs. With $q=1/2$ and weak inequalities this is the weak counterpart of Gehrlein's Condorcet committee, which uses strict majority \cite{Gehrlein1985}.
+\end{definition}
+
+Diss and Mahajne use the strict convention $n_{ab}>qn$ with $q<1$ \cite[Definition~5]{DissMahajne2020}. We follow them in using weak inequalities for sufficiency statements and strict inequalities for sharpness claims; the distinction matters at $q=1$, where a weak $1$-Condorcet committee is unanimously preferred to every nonmember by every voter, while a strict one cannot exist. Every counterexample below is strict at its stated $q<1$. When we call a quota exact we mean that it is the infimum of the quotas with the stated property in the weak convention, and that counterexamples exist below it that are strict.
+
+\begin{remark}[A conjunctive, not a disjunctive, qualified majority]
+\label{rem:conjunctive}
+Definition \ref{def:qcond} is \emph{conjunctive}: each of the $k$ members must clear $qn$ against each of the $t$ outsiders, which is $kt$ pairwise conditions. The multiwinner literature also studies a \emph{disjunctive} condition in which different voters may rely on different members: following Elkind, Lang and Saffidine \cite{ElkindLangSaffidine2015}, for $\theta\in[0,1)$ a set $C$ is a \emph{$\theta$-winning set} if
+\[
+\#\bigl\{i\in N:\ \exists a\in C\ \text{with}\ a\succ_i d\bigr\}>\theta n
+\qquad\text{for every } d\in A\setminus C,
+\]
+i.e.\ more than a fraction $\theta$ of the voters rank \emph{some} member above $d$; the case $\theta=\frac12$ is what \cite{ElkindLangSaffidine2015} call a Condorcet winning set. This is only $t$ conditions, and they may be discharged by different members. At a common threshold the conjunctive condition is the stronger one, with a strictness caveat: a strict $q$-Condorcet committee is a $\theta$-winning set for every $\theta\le q$, and a weak $q$-Condorcet committee is one for every $\theta<q$; the converse fails, since a $\theta$-winning set may have no single member preferred to a given outsider by $\theta n$ voters. Aziz, Elkind, Faliszewski, Lackner and Skowron \cite{AzizEtAl2017} compare this condition with local stability in the multiwinner setting; neither paper asks any acceptability question. Because the two uses of ``$q$-majority'' are not interchangeable, we keep $q$ for the conjunctive quota throughout.
+\end{remark}
+
+\subsection{Ranks relative to the line}
+
+\begin{definition}[Above-line, on-line and below-line ranks]
+\label{def:ranks}
+When $K=2r$ is even, the first $r$ positions of a ballot are \textbf{above the line} and the last $r$ are \textbf{below the line}. When $K=2r+1$ is odd, the first $r$ positions are above the line, position $r+1$ is \textbf{on the line}, and the last $r$ are below the line. Write $\operatorname{rank}_{\succ}(a)$ for the rank of $a$ in $\succ$, with rank $1$ best. Thus $a$ is above the line iff $\operatorname{rank}_\succ(a)<(K+1)/2$, below it iff $\operatorname{rank}_\succ(a)>(K+1)/2$, and on it iff $K$ is odd and $\operatorname{rank}_\succ(a)=(K+1)/2$; this is the convention of \cite[p.~16]{DissMahajne2020}.
+\end{definition}
+
+\subsection{Acceptability counts}
+
+\begin{definition}[Social acceptability]
+\label{def:accept}
+For $a\in C$ put
+\[
+B_a=\#\{i:\operatorname{rank}_{\succ_i}(a)>(K+1)/2\},\quad
+A_a=\#\{i:\operatorname{rank}_{\succ_i}(a)<(K+1)/2\},\quad
+O_a=\#\{i:\operatorname{rank}_{\succ_i}(a)=(K+1)/2\},
+\]
+so that $A_a+B_a+O_a=n$ and $O_a=0$ when $K$ is even. A member $a\in C$ is \textbf{socially acceptable} if $B_a\le A_a$ and \textbf{socially unacceptable} otherwise. The committee is \textbf{socially acceptable} if every member is acceptable and \textbf{completely unacceptable} if every member is unacceptable. On-line placements count in neither $A_a$ nor $B_a$.
+\end{definition}
+
+We shall use one consequence repeatedly: if every member of a set $U\subseteq C$ is unacceptable, then
+\begin{equation}
+\label{eq:oneway}
+\sum_{a\in U}(B_a-A_a)>0 .
+\end{equation}
+The converse fails and is not used: a single member with a large excess can make the sum positive while the other members of $U$ are acceptable (e.g.\ excesses $3,-1,-1$). The sufficiency proof below uses only \eqref{eq:oneway}; the sharpness proofs produce profiles that are symmetric over $U$, so there all members are unacceptable simultaneously.
+
+\subsection{Auxiliary defeat counts}
+
+\begin{definition}[Defeat counts]
+\label{def:defeat}
+For $a\in C$ and $i\in N$ let
+\[
+w_i(a)=\#\{d\in D: a\succ_i d\}
+\]
+be the number of nonmembers beaten by $a$ in ballot $i$, and $W_\pi(a)=\sum_{d\in D}n_{ad}$; then $\sum_{i\in N}w_i(a)=W_\pi(a)$. For $U\subseteq C$ and $i\in N$ let
+\[
+D_i(U)=\sum_{a\in U}\bigl(t-w_i(a)\bigr),
+\]
+the number of ordered pairs $(a,d)\in U\times D$ with $d$ beating $a$ in ballot $i$, and let
+\[
+b_i=\#\{a\in U: a \text{ below the line in }\succ_i\},\quad
+o_i=\#\{a\in U: a \text{ on the line in }\succ_i\},\quad
+u_i=\ell-b_i-o_i,
+\]
+so that $o_i\in\{0,\eps\}$ when $\#U=\ell$.
+\end{definition}
+
+\subsection{Thresholds for $\ell$-unacceptability}
+
+\begin{definition}[Threshold for $\ell$-unacceptability]
+\label{def:threshold}
+For $\ell\in\{1,\dots,k\}$ let
+\[
+S_\ell(K,k)=\bigl\{q\in[1/2,1]:\ \text{every weak }q\text{-Condorcet committee of size }k\text{ has fewer than }\ell\text{ unacceptable members}\bigr\}
+\]
+and define $q_\ell^*(K,k)=\inf S_\ell(K,k)$, with the convention $\inf\varnothing=+\infty$. Monotonicity of the defining property in $q$ makes $S_\ell(K,k)$ upward closed: if $q\in S_\ell$ and $q'\ge q$, then $q'\in S_\ell$. If $S_\ell(K,k)\ne\varnothing$ and $q_\ell^*<\infty$, this gives only
+\[
+(q_\ell^*,1]\subseteq S_\ell(K,k)\subseteq[q_\ell^*,1],
+\]
+whether the left endpoint itself belongs to $S_\ell(K,k)$ being a separate question; and $S_\ell(K,k)=\varnothing$ exactly when $q_\ell^*=+\infty$. Theorem \ref{thm:hierarchy} determines $q_\ell^*$ for $1\le k\le\cl{K/2}$, where it is finite, and settles the endpoint affirmatively there. Theorem \ref{thm:boundary}(b) covers the empty case at $\ell=1$ for sizes above the boundary; at those sizes and for $\ell\ge2$ the set may be nonempty (Remark \ref{rem:aboveboundary}).
+\end{definition}
+
+The definition does not presuppose attainment, and nothing below rests on one: Theorem \ref{thm:hierarchy}(a) shows that the value displayed there belongs to $S_\ell$, and Theorem \ref{thm:hierarchy}(b) shows that no smaller $q$ does.
+
+\section{Two counting lemmas}
+\label{sec:lemmas}
+
+\begin{lemma}[Weak $q$-Condorcet lower bound]
+\label{lem:qlower}
+If $C$ is a weak $q$-Condorcet committee and $a\in C$, then $W_\pi(a)=\sum_{d\in D}n_{ad}\ge qnt$. Consequently, for every $U\subseteq C$,
+\[
+\sum_{i\in N}D_i(U)=\sum_{a\in U}\sum_{d\in D}n_{da}\le \#U\cdot t\,(1-q)\,n .
+\]
+\end{lemma}
+
+\begin{proof}
+$n_{ad}\ge qn$ for each of the $t$ nonmembers $d\in D$. Summing over $a\in U$ and using $n_{da}=n-n_{ad}$ gives the second claim.
+\end{proof}
+
+\begin{lemma}[Single-member defeat bound]
+\label{lem:single}
+Let $K\ge3$, let $C$ have size $k\le r$, and put $s=r-k+1+\eps$. For every $i\in N$ and every $a\in C$,
+\[
+t-w_i(a)\ge
+\begin{cases}
+s, & a\text{ below the line in }\succ_i,\\
+s-1, & a\text{ on the line in }\succ_i,\\
+0, & a\text{ above the line in }\succ_i.
+\end{cases}
+\]
+The on-line case occurs only when $\eps=1$.
+\end{lemma}
+
+\begin{proof}
+If $a$ is below the line, at least $r+\eps$ alternatives precede it, of which at most $k-1$ are members of $C\setminus\{a\}$; so at least $(r+\eps)-(k-1)=r-k+1+\eps=s$ nonmembers precede $a$ and $t-w_i(a)\ge s$. If $a$ is on the line, exactly $r$ alternatives precede it and at most $k-1$ are committee members, so at least $r-(k-1)=s-1$ nonmembers precede it. The above-line case is the nonnegativity of $t-w_i(a)$.
+\end{proof}
+
+\begin{remark}[Parity bookkeeping]
+\label{rem:parity}
+For $K=2r$, $\eps=0$, $s=r-k+1$; for $K=2r+1$, $\eps=1$, $s=r-k+2$. In both cases $t=r+s-1$, and on $k\le r$ the odd case gives $s\ge2$. These identities are the reason every formula below is uniform in the parity once $s$ is used.
+\end{remark}
+
+\section{The full-acceptability frontier}
+\label{sec:full}
+
+Throughout this section $1\le k\le r$, and $s,t,Q$ are as in \eqref{eq:Q}.
+
+\subsection{Identification of the threshold with the published $q_0$}
+
+\begin{proposition}[The algebraic threshold is Diss and Mahajne's $q_0^{\DM}$]
+\label{prop:identification}
+Let $K\ge3$ and $1\le k<K$ with $s\ge1$. Then $Q(K,k)=1-\frac{s}{2t}=q_0^{\DM}=\dfrac{3K-2k-2-\eps}{4(K-k)}$. In particular $Q(K,1)=q_0^{\DM}(K,1)$ equals Mahajne and Volij's single-winner threshold, $(3K-4)/(4K-4)$ for even $K$ and $(3K-5)/(4K-4)$ for odd $K$ \cite{MahajneVolij2019}.
+\end{proposition}
+
+\begin{proof}
+The first equality is \eqref{eq:Q}; the second is \eqref{eq:identity}. The $k=1$ values follow by substitution.
+\end{proof}
+
+\begin{remark}
+Proposition \ref{prop:identification} carries no novelty claim: it records that the number studied here is the published $q_0^{\DM}$.
+\end{remark}
+
+\subsection{Sufficiency}
+
+\begin{theorem}[Sufficiency; $\ell=1$]
+\label{thm:suff}
+Let $K\ge3$, $1\le k\le r$ and $q\ge Q(K,k)$. Then every weak $q$-Condorcet committee of size $k$ is socially acceptable.
+\end{theorem}
+
+\begin{proof}
+Let $C$ be a weak $q$-Condorcet committee and suppose $a\in C$ is unacceptable, i.e.\ $B_a>A_a$. By Lemma \ref{lem:single}, in each ballot
+\[
+t-w_i(a)\ge s\cdot\mathbb{1}[a\text{ below}]+(s-1)\cdot\mathbb{1}[a\text{ on the line}].
+\]
+Summing over $i\in N$ and using $n=A_a+B_a+O_a$,
+\[
+nt-W_\pi(a)\ge sB_a+(s-1)O_a
+=\frac{s}{2}(B_a-A_a)+\Bigl(\frac{s}{2}-1\Bigr)O_a+\frac{ns}{2},
+\]
+the identity following by adding and subtracting $\frac{s}{2}(B_a+A_a+O_a)=\frac{ns}{2}$. If $\eps=0$ then $O_a=0$; if $\eps=1$ then $k\le r$ gives $s\ge2$ by Remark \ref{rem:parity}, so $s/2-1\ge0$. In both regimes $B_a>A_a$ makes the first two terms strictly positive, so
+\[
+nt-W_\pi(a)>\frac{ns}{2}.
+\]
+On the other hand $W_\pi(a)\ge qnt\ge Q(K,k)\,nt=nt-\frac{ns}{2}$ by Lemma \ref{lem:qlower} and \eqref{eq:Q}, so $nt-W_\pi(a)\le\frac{ns}{2}$. Contradiction.
+\end{proof}
+
+\begin{remark}[What is and is not new here]
+\label{rem:notnew}
+The estimate is in the working paper \cite[pp.~8--10]{DissMahajne2019}. There Diss and Mahajne derive, for each single member $c_j$ of a \emph{completely} unacceptable committee, the bounds $W_\pi(c_j)<n(3K-2k-2)/4$ (even $K$) and $W_\pi(c_j)<n(3K-2k-3)/4$ (odd $K$) from exactly the per-ballot accounting of Lemma \ref{lem:single}, and then sum over the $k$ members. Their hypothesis is that all members are unacceptable, but the estimate is member-wise and uses nothing about the other members. Comparing it, member by member, with $W_\pi(c_j)\ge qn(K-k)$ gives Theorem \ref{thm:suff} with the sharper odd-$K$ constant intact. In the published article the parity form \eqref{eq:DMpar} of $q_0^{\DM}$ is stated, but only the weaker conclusion (a) is drawn from it. The content of this subsection is thus that the conclusion supported by the working-paper proof is stronger than the statement drawn from it, and that the summation over the committee --- where the larger quota is generated (Section \ref{sec:source}) --- is unnecessary.
+\end{remark}
+
+\subsection{Sharpness}
+
+\begin{theorem}[Sharpness; $\ell=1$]
+\label{thm:sharp}
+Let $K\ge4$, $1\le k\le r$ and $q\in[1/2,Q(K,k))$. Then there exist a finite profile $\pi$ and a committee $C$ of size $k$ such that $C$ is a strict $q$-Condorcet committee and is not socially acceptable.
+\end{theorem}
+
+\begin{proof}
+Write $C=\{a_1,\dots,a_k\}$ and $D=A\setminus C$, and let $\mathcal S$ be the family of $s$-subsets of $D$. Since $q<Q=1-s/(2t)$ we have $s/(2t)<1-q$, i.e.\ $(1-q)t/s>1/2$. Choose a rational
+\[
+\rho\in\Bigl(\frac12,\ \min\Bigl\{1,\ \frac{(1-q)t}{s}\Bigr\}\Bigr),
+\]
+write $\rho=M/L$ with positive integers $M<L$, and put $G=L-M$, so $M>G$.
+
+\emph{Case $\eps=0$.} For every $S\in\mathcal S$ take $M$ ballots
+\[
+[C\setminus\{a_1\}]\ \succ\ [S]\ \succ\ a_1\ \succ\ [D\setminus S]
+\]
+and $G$ ballots
+\[
+[C\setminus\{a_1\}]\ \succ\ a_1\ \succ\ [D].
+\]
+Since $r=k+s-1$ (Remark \ref{rem:parity}), the first type places exactly $k-1+s=r$ alternatives above the line and $a_1$ immediately below it, while the second places $a_1$ at rank $k\le r$, above the line.
+
+\emph{Case $\eps=1$.} For every $S\in\mathcal S$ choose a distinguished $d_O\in S$ and take $M$ ballots
+\[
+[C\setminus\{a_1\}]\ \succ\ [S\setminus\{d_O\}]\ \succ\ d_O\ \succ\ a_1\ \succ\ [D\setminus S]
+\]
+and $G$ ballots
+\[
+[C\setminus\{a_1\}]\ \succ\ a_1\ \succ\ [D].
+\]
+Here $r=k+s-2$, so the first type places $k-1+(s-1)=r$ alternatives above the line, $d_O$ on the line, and $a_1$ below the line; the second places $a_1$ above the line.
+
+Brackets denote a fixed arbitrary order, and the multiplicative factors are taken uniformly over all choices, which yields a finite profile after clearing denominators. In both cases $a_1$ is below the line in exactly the $M$-blocks and above it in the $G$-blocks, and never on it, so $B_{a_1}>A_{a_1}$ and $C$ is not socially acceptable. Each $a_j$ with $j\ge2$ beats every $d\in D$ in every ballot. For fixed $d\in D$ the fraction of ballots with $d\in S$ is $s/t$, and the $M$-blocks occupy a fraction $\rho$ of all ballots, so each pair $(a_1,d)$ is defeated in a fraction $\rho s/t<1-q$. Hence $C$ is a strict $q$-Condorcet committee.
+\end{proof}
+
+\begin{remark}[On the generality of the construction]
+\label{rem:generality}
+At $k=1$, Theorem \ref{thm:sharp} reproduces the sharpness statement of Proposition~1 of \cite{MahajneVolij2019}: that paper prints the even-$K$ construction and describes the odd-$K$ case as similar and left to the reader, so at $k=1$ the construction above fills in the omitted odd-$K$ case of a routine parameter value. For general $k$ the sym\-metrised $s$-subset construction is not printed in \cite{DissMahajne2019}, which establishes sharpness of $q_0^{\DM}$ only at $K=4$, $k=2$; since the quota is theirs, we regard the construction as a service to the literature rather than as a contribution.
+\end{remark}
+
+\section{The exact frontier for every number of unacceptable members}
+\label{sec:hierarchy}
+
+\subsection{Scope and the candidate formula}
+
+The two published quotas are below unity exactly when $2k<K+2$, i.e.\ on the range \eqref{eq:rangefull} together with its odd-boundary point. We assume
+\[
+K\ge3,\qquad 1\le k\le \cl{K/2}=r+\eps,\qquad s=r-k+1+\eps\ge1,\qquad t=K-k=r+s-1 .
+\]
+The case $\eps=1$, $s=1$ is exactly the odd boundary $k=r+1$; otherwise either $\eps=0$ or $\eps=1$ and $s\ge2$, and in both of these \emph{regular} regimes $k\le r$.
+
+For $\ell\in\{1,\dots,k\}$ define
+\begin{equation}
+\label{eq:M}
+M_{\eps,s}(\ell)=
+\begin{cases}
+m(s-1+m), & \ell=2m,\ \ \eps=0\text{ or }s\ge2,\\[4pt]
+m(m+s)+\dfrac{s}{2}, & \ell=2m+1,\ \ \eps=0\text{ or }s\ge2,\\[10pt]
+m^{2}, & \ell=2m,\ \ \eps=1,\ s=1,\\[4pt]
+m(m+1), & \ell=2m+1,\ \ \eps=1,\ s=1,
+\end{cases}
+\end{equation}
+and set
+\begin{equation}
+\label{eq:candidate}
+\bar q_\ell(K,k)=1-\frac{M_{\eps,s}(\ell)}{\ell\,t}.
+\end{equation}
+Theorem \ref{thm:hierarchy} proves $\bar q_\ell=q_\ell^*$ on the stated range. In the regular regime the closed form simplifies; the odd boundary must use the last two branches directly, because there $2M_{1,1}(\ell)-\ell s=2m^2-1$ for odd $\ell=2m+1$, and not $2m^2$ (Remark \ref{rem:boundaryidentity}).
+
+\begin{proposition}[Normalisation]
+\label{prop:normalisation}
+In every regime $0\le M_{\eps,s}(\ell)\le \ell t/2$, hence $\bar q_\ell\in[1/2,1]$. Moreover
+\[
+M_{\eps,s}(1)=\frac{s}{2},\qquad M_{\eps,s}(2)=s\quad\text{in the regular regime},
+\qquad M_{1,1}(1)=0,\qquad M_{1,1}(2)=1\ \text{at the odd boundary}.
+\]
+\end{proposition}
+
+\begin{proof}
+In the regular regime $\ell\le k\le r$. For $\ell=2m$: $M=m(s-1+m)\le m(r+s-1)=mt=\ell t/2$ since $m\le r$. For $\ell=2m+1$: $2M=2m(m+s)+s$ while $\ell t=(2m+1)(r+s-1)=(2m+1)(r-1)+(2m+1)s$, so $\ell t-2M=(2m+1)(r-1)-2m^2\ge(2m+1)(2m)-2m^2=2m^2+2m\ge0$ using $r\ge2m+1$. At the odd boundary $t=r$ and $\ell\le r+1$: for $\ell=2m$, $M=m^2\le mr=\ell r/2$; for $\ell=2m+1$, $2M=2m(m+1)\le(2m+1)r$ since $r\ge2m$. The end values are the substitutions $m=0$ in the odd-$\ell$ branch and $m=1$ in the even-$\ell$ branch of \eqref{eq:M}.
+\end{proof}
+
+\subsection{A block counting lemma}
+
+Fix $U\subseteq C$ with $\#U=\ell$ and let $b_i,o_i,u_i$ be as in Definition \ref{def:defeat}.
+
+\begin{lemma}[Block defeat bound]
+\label{lem:block}
+For every $U\subseteq C$ with $\#U=\ell$ and every voter $i$,
+\[
+D_i(U)\ge (b_i+o_i)(s-1+b_i).
+\]
+For $\ell=1$ this reduces to the three single-member bounds of Lemma \ref{lem:single}.
+\end{lemma}
+
+\begin{proof}
+Let $c_A,c_O$ be the numbers of all committee members ranked above and on the line by voter $i$, and $d_A,d_O$ the corresponding numbers of nonmembers. Then
+\[
+c_A+c_O\le (k-\ell)+u_i+o_i=k-b_i,
+\]
+because $C\setminus U$ has $k-\ell$ members and at most $u_i+o_i$ members of $U$ are not below the line. Hence
+\[
+d_A+d_O=(r+\eps)-(c_A+c_O)\ge r+\eps-k+b_i=s-1+b_i .
+\]
+Also $c_O\ge o_i$, so $d_O=\eps-c_O\le\eps-o_i$, and
+\[
+d_A=r-c_A\ge r-(k-\ell)-u_i=r-k+b_i+o_i=b_i+s-1-(\eps-o_i).
+\]
+Every above-line nonmember beats all $b_i+o_i$ members of $U$ that are on or below the line, and every on-line nonmember beats all $b_i$ below-line members of $U$; hence
+\[
+D_i(U)\ge d_A(b_i+o_i)+d_O b_i .
+\]
+Subject to $d_A+d_O\ge s-1+b_i$, $0\le d_O\le\eps-o_i$ and the lower bound on $d_A$ above, this expression is minimised as follows.
+
+If $s-1+b_i\le \eps-o_i$, take $d_O=s-1+b_i$ and $d_A=0$; then either $o_i=0$ or $s-1+b_i=0$, and in both cases $(b_i+o_i)(s-1+b_i)=(s-1+b_i)b_i=d_A(b_i+o_i)+d_Ob_i$.
+
+If $s-1+b_i>\eps-o_i$, take $d_O=\eps-o_i$ and $d_A=s-1+b_i-(\eps-o_i)$. Then
+\[
+d_A(b_i+o_i)+d_O b_i=\bigl(s-1+b_i-(\eps-o_i)\bigr)(b_i+o_i)+(\eps-o_i)b_i=(b_i+o_i)(s-1+b_i)-o_i(\eps-o_i),
+\]
+and $o_i(\eps-o_i)=0$ because $o_i\in\{0,\eps\}$. In both cases the claim follows.
+\end{proof}
+
+\subsection{The lower convex envelope}
+
+Define the state value and the state coordinate
+\[
+\psi(b,o)=(b+o)(s-1+b),\qquad x(b,o)=b+\frac{o}{2}.
+\]
+For $\eps=0$ only $o=0$ occurs, and $\psi(b,0)=:\psi_A(b)=b(s-1+b)$. For $\eps=1$ also $o=1$ occurs, and we write $\psi_B(b):=\psi(b,1)=(b+1)(s-1+b)$. Let $\uw_{\eps,s}$ be the lower convex envelope of the points
+\[
+A_b=\bigl(b,\psi_A(b)\bigr)\ \ (b\ge0),\qquad\text{and, if }\eps=1,\qquad B_b=\bigl(b+\tfrac12,\psi_B(b)\bigr)\ \ (b\ge0).
+\]
+
+\begin{lemma}[Envelope properties]
+\label{lem:envelope}
+Let $1\le k\le\cl{K/2}$. Then:
+\begin{enumerate}[label=(\roman*)]
+\item $\uw_{\eps,s}$ is convex and nondecreasing on $[0,k]$, and strictly increasing on $[\frac12,k]$;
+\item $\uw_{\eps,s}\bigl(x(b,o)\bigr)\le\psi(b,o)$ for every admissible state $(b,o)$ with $0\le b\le k$;
+\item $\uw_{\eps,s}(\ell/2)=M_{\eps,s}(\ell)$ for every $\ell\in\{1,\dots,k\}$, with $M_{\eps,s}$ as in \eqref{eq:M}.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Since $\psi_A(b+1)-\psi_A(b)=s+2b$ increases in $b$, the $A_b$ form a convex sequence, and a direct calculation gives
+\[
+\psi_B(b)-\frac{\psi_A(b)+\psi_A(b+1)}{2}=\frac{s-2}{2}.
+\]
+If $\eps=0$ or $s\ge2$, the right-hand side is nonnegative, so every $B_b$ lies on or above the chord joining $A_b$ and $A_{b+1}$; the lower envelope is therefore the piecewise-linear interpolation of the $A_b$, with slopes $s+2b>0$. If $\eps=1$ and $s=1$, then $\psi_A(b)=b^2$ and $\psi_B(b)=b(b+1)$, and the successive slopes along $A_b\to B_b\to A_{b+1}\to B_{b+1}$ are $2b,\,2b+2,\,2b+2,\,2b+4,\dots$, which are nondecreasing; the envelope is the interpolation through $A_0,B_0,A_1,B_1,\dots$, whose only flat step is $A_0B_0$ of slope $2\cdot0=0$, on $[0,\tfrac12]$. This proves (i).
+
+For (ii): if $o=0$ then $x=b$ is a knot and $\uw(b)\le\psi_A(b)$. If $o=1$ then $x=b+\frac12$; in the regular regime $\uw(b+\frac12)=\frac{\psi_A(b)+\psi_A(b+1)}{2}\le\psi_B(b)$ by the displayed inequality, and at the odd boundary $b+\frac12$ is itself a knot $B_b$, where $\uw=\psi_B(b)$.
+
+For (iii): in the regular regime $\uw(m)=\psi_A(m)=m(s-1+m)$ and $\uw(m+\frac12)=\frac{\psi_A(m)+\psi_A(m+1)}{2}=m(m+s)+\frac{s}{2}$; at the odd boundary $\uw(m)=\psi_A(m)=m^2$ and $\uw(m+\frac12)=\psi_B(m)=m(m+1)$. These are exactly the four branches of \eqref{eq:M}, according to the parity of $\ell$.
+\end{proof}
+
+\subsection{The hierarchy theorem}
+
+\begin{theorem}[Exact $\ell$-frontier]
+\label{thm:hierarchy}
+Let $K\ge3$, $1\le k\le\cl{K/2}$ and $1\le\ell\le k$. Then $q_\ell^*(K,k)=\bar q_\ell(K,k)$, i.e.:
+\begin{enumerate}[label=(\alph*)]
+\item every weak $q$-Condorcet committee of size $k$ with $q\ge\bar q_\ell(K,k)$ has fewer than $\ell$ socially unacceptable members;
+\item for every $q\in[1/2,\bar q_\ell(K,k))$ there exist a finite profile and a strict $q$-Condorcet committee of size $k$ with at least $\ell$ socially unacceptable members.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}[Proof of (a)]
+Suppose the weak $q$-Condorcet committee $C$ has an $\ell$-set $U$ of unacceptable members. By \eqref{eq:oneway}, $\sum_{a\in U}(B_a-A_a)>0$; and since $n=A_a+B_a+O_a$, this sum equals $\sum_i(b_i-u_i)=\sum_i(2b_i+o_i-\ell)$, so
+\[
+\sum_{i=1}^n(2b_i+o_i)>n\ell,\qquad\text{i.e.}\qquad \bar x:=\frac1n\sum_{i=1}^n x(b_i,o_i)>\frac{\ell}{2},
+\]
+because $2b_i+o_i=2x(b_i,o_i)$. By Lemma \ref{lem:block}, Lemma \ref{lem:envelope}(ii), convexity and strict monotonicity at $\ell/2$,
+\[
+\sum_{i=1}^n D_i(U)\ge\sum_{i=1}^n\uw_{\eps,s}\bigl(x(b_i,o_i)\bigr)\ge n\,\uw_{\eps,s}(\bar x)>n\,\uw_{\eps,s}\Bigl(\frac{\ell}{2}\Bigr)=nM_{\eps,s}(\ell),
+\]
+the middle inequality being Jensen's and the last Lemma \ref{lem:envelope}(iii). On the other hand Lemma \ref{lem:qlower} gives
+\[
+\sum_{i=1}^n D_i(U)=\sum_{a\in U}\sum_{d\in D}n_{da}\le \ell t(1-q)n .
+\]
+If $q\ge 1-M_{\eps,s}(\ell)/(\ell t)=\bar q_\ell$, then $\ell t(1-q)n\le nM_{\eps,s}(\ell)$, a contradiction.
+\end{proof}
+
+\begin{proof}[Proof of (b), regular regime $\eps=0$ or $s\ge2$]
+Here $k\le r$, $t=r+s-1$, and the envelope at $\ell/2$ is generated by the $A_b$ states (Lemma \ref{lem:envelope}(iii)). Put $p=\fl{\ell/2}$ and choose rational weights $\lambda_p,\lambda_{p+1}\ge0$ with $\lambda_p+\lambda_{p+1}=1$ and
+\[
+\mu:=\lambda_p p+\lambda_{p+1}(p+1)>\frac{\ell}{2},\qquad
+E\psi:=\lambda_p\psi_A(p)+\lambda_{p+1}\psi_A(p+1)<(1-q)\ell t .
+\]
+Such weights exist: for $\ell=2m$ take $\lambda_m=1-\delta$, $\lambda_{m+1}=\delta$, and for $\ell=2m+1$ take $\lambda_m=\tfrac12-\delta$, $\lambda_{m+1}=\tfrac12+\delta$; in both cases $\mu>\ell/2$ for $\delta>0$ and $E\psi\to M_{\eps,s}(\ell)<(1-q)\ell t$ as $\delta\to0^{+}$.
+
+Fix $U=\{a_1,\dots,a_\ell\}\subseteq C$ and, for $b\in\{p,p+1\}$, put $\widehat s_b=s-1+b$. Since $b\le p+1\le r\le t$ we have $0\le\widehat s_b\le t$; when $\widehat s_b=0$ the set $\widehat S$ below is empty and the ranking is read without it. Choose a rational mixture over $b$ with weights $\lambda_b$. For a fixed $b$, choose uniformly a $b$-subset $B\subseteq U$, an $\widehat s_b$-subset $\widehat S\subseteq D$ and, when $\eps=1$, a distinguished $d_O\in\widehat S$; let $S_A=\widehat S\setminus\{d_O\}$ when $\eps=1$ and $S_A=\widehat S$ when $\eps=0$, and use the ranking
+\[
+[C\setminus U]\ \succ\ [U\setminus B]\ \succ\ [S_A]\ \succ\ d_O\ (\eps=1)\ \succ\ [B]\ \succ\ [D\setminus\widehat S],
+\]
+omitting the $d_O$ term when $\eps=0$. Above the line there are $(k-\ell)+(\ell-b)+(\widehat s_b-\eps)=k-b+s-1+b-\eps=r$ positions and below the line $b+(t-\widehat s_b)=r$; no member of $U$ is on the line. Combining the choices uniformly and clearing denominators gives a finite profile.
+
+For a pair $(a,d)\in U\times D$, $d$ beats $a$ if and only if $a\in B$ and $d\in\widehat S$, a fraction
+\[
+\sum_b\lambda_b\frac{b}{\ell}\cdot\frac{\widehat s_b}{t}=\frac{E\psi}{\ell t}<1-q
+\]
+of ballots. For $a\in C\setminus U$ no nonmember ever beats $a$, so $C$ is a strict $q$-Condorcet committee. By symmetry under permutations of $U$, each $a\in U$ is below the line in a fraction $\mu/\ell$ of ballots and above it in a fraction $1-\mu/\ell$; since $\mu>\ell/2$, every $a\in U$ is unacceptable.
+\end{proof}
+
+\begin{proof}[Proof of (b), odd boundary $\eps=1$, $s=1$]
+Here $K=2r+1$, $k=r+1$, $t=r$. Write $\psi_A(b)=b^2$ and $\psi_B(b)=b(b+1)$ and use two state families.
+
+\begin{itemize}
+\item An $A_b$-state ($o=0$, $x=b$, value $b^2$): choose a $b$-subset $B\subseteq U$ and a $b$-subset $\widehat S\subseteq D$; for $b\ge1$ choose $d_O\in\widehat S$, set $S_A=\widehat S\setminus\{d_O\}$ and use
+\[
+[C\setminus U]\ \succ\ [U\setminus B]\ \succ\ [S_A]\ \succ\ d_O\ \succ\ [B]\ \succ\ [D\setminus\widehat S].
+\]
+\item A $B_b$-state ($o=1$, $x=b+\tfrac12$, value $b(b+1)$): choose a $b$-subset $B\subseteq U$, a distinguished $u_0\in U\setminus B$ for the on-line position, and a $b$-subset $\widehat S\subseteq D$; use
+\[
+[C\setminus U]\ \succ\ [U\setminus(B\cup\{u_0\})]\ \succ\ [\widehat S]\ \succ\ u_0\ \succ\ [B]\ \succ\ [D\setminus\widehat S].
+\]
+Above the line there are $(k-\ell)+(\ell-b-1)+b=k-1=r$ positions and below the line $b+(r-b)=r$.
+\end{itemize}
+
+All choices are combined uniformly with rational state weights. In an $A_b$-state a pair $(a,d)\in U\times D$ is a defeat if and only if $a\in B$ and $d\in\widehat S$, a fraction $b^2/(\ell t)$ of ballots; in a $B_b$-state if and only if $a\in B\cup\{u_0\}$ and $d\in\widehat S$, a fraction $b(b+1)/(\ell t)$. Hence the overall fraction of ballots containing a given defeat is $E\psi/(\ell t)$.
+
+If $\ell=2m$, mix $A_m$ with weight $1-\delta$ and $B_m$ with weight $\delta$; then $Ex=m+\delta/2>\ell/2$ and $E\psi=(1-\delta)m^2+\delta m(m+1)\to m^2=M_{1,1}(\ell)$. If $\ell=2m+1$, mix $B_m$ with weight $1-\delta$ and $A_{m+1}$ with weight $\delta$; then $Ex=m+\frac12+\delta/2>\ell/2$ and $E\psi=(1-\delta)m(m+1)+\delta(m+1)^2\to m(m+1)=M_{1,1}(\ell)$. Since $q<\bar q_\ell$ we have $(1-q)\ell t>M_{1,1}(\ell)$, so a rational $\delta>0$ can be chosen with $E\psi<(1-q)\ell t$, and clearing denominators gives a finite profile. Every member of $C\setminus U$ beats all nonmembers in every state, so $C$ is a strict $q$-Condorcet committee; the construction is symmetric in $U$, and $Ex>\ell/2$ is exactly $\sum_{a\in U}(B_a-A_a)>0$, so every $a\in U$ is unacceptable.
+\end{proof}
+
+\begin{remark}[Why the two regimes differ]
+\label{rem:boundaryidentity}
+In the regular regime a direct calculation gives
+\begin{equation}
+\label{eq:identityM}
+2M_{\eps,s}(\ell)-\ell s=2\fl{\frac{(\ell-1)^2}{4}},
+\end{equation}
+which yields the crowd-out formula of Corollary \ref{cor:hierarchy}. At $\eps=1$, $s=1$ and $\ell=2m+1$ the left-hand side of \eqref{eq:identityM} equals $2m^2-1$ instead, because the envelope passes through the $B$-states at half-integer arguments. The parity loss of $1$ accounts for the difference between the regular prediction $M_{1,1}(1)=s/2=\tfrac12$ and the true value $M_{1,1}(1)=0$: at the odd boundary the envelope value is \emph{lower}, hence the quota is \emph{higher}, moving from the regular-formula value $1-\frac{1}{2r}$ to $1$ (Theorem \ref{thm:boundary}(a)).
+\end{remark}
+
+\begin{corollary}[The hierarchy on $2\le k\le r$]
+\label{cor:hierarchy}
+Assume $K\ge4$ and $2\le k\le r=\fl{K/2}$. Then
+\begin{enumerate}[label=(\alph*)]
+\item $q_1^*(K,k)=q_2^*(K,k)=Q(K,k)=q_0^{\DM}$;
+\item for every $3\le\ell\le k$,
+\[
+q_\ell^*(K,k)=q_0^{\DM}-\frac{\fl{(\ell-1)^2/4}}{\ell\,(K-k)}<q_0^{\DM};
+\]
+\item the exact complete-unacceptability threshold is
+\[
+q_{\mathrm{comp}}^*(K,k):=q_k^*(K,k)=q_0^{\DM}-\frac{\fl{(k-1)^2/4}}{k\,(K-k)} ,
+\]
+so $q_{\mathrm{comp}}^*=q_0^{\DM}$ for $k=2$ and $q_{\mathrm{comp}}^*<q_0^{\DM}$ for every $3\le k\le r$.
+\end{enumerate}
+\end{corollary}
+
+\begin{proof}
+On $k\le r$ we are in the regular regime. By Proposition \ref{prop:normalisation}, $M_{\eps,s}(1)=s/2$ and $M_{\eps,s}(2)=s$, so $q_1^*=q_2^*=1-s/(2t)=Q(K,k)=q_0^{\DM}$ by Proposition \ref{prop:identification}, giving (a). For general $\ell$, \eqref{eq:identityM} gives
+\[
+q_\ell^*=1-\frac{M_{\eps,s}(\ell)}{\ell t}=1-\frac{s}{2t}-\frac{\fl{(\ell-1)^2/4}}{\ell t}=q_0^{\DM}-\frac{\fl{(\ell-1)^2/4}}{\ell t},
+\]
+which is (b), the floor term vanishing for $\ell=1,2$ and being positive for $\ell\ge3$. Part (c) is the case $\ell=k$.
+\end{proof}
+
+\begin{corollary}[The boundary step]
+\label{cor:boundarystep}
+Let $K=2r+1$ and $k=r+1$. Then $q_1^*(K,k)=1$ while $q_2^*(K,k)=1-\frac{M_{1,1}(2)}{2r}=1-\frac{1}{2r}<1$. The collapse $q_1^*=q_2^*$ is therefore specific to the range $k\le r$.
+\end{corollary}
+
+\begin{proof}
+$M_{1,1}(1)=0$ gives $q_1^*=1$ and $M_{1,1}(2)=1$ gives $q_2^*=1-\frac{1}{2r}$, both by Proposition \ref{prop:normalisation} and Theorem \ref{thm:hierarchy}; and $r\ge1$.
+\end{proof}
+
+\subsection{Two contrasts with the published numbers}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{cccccc}
+\toprule
+$K$ & $k$ & $q_0^{\DM}$ & $q_1^{\DM}$ & $q_k^*$ & $q_0^{\DM}$ exact for complete?\\
+\midrule
+$4$ & $2$ & $3/4$ & $7/8$ & $3/4$ & yes\\
+$6$ & $2$ & $3/4$ & $7/8$ & $3/4$ & yes\\
+$6$ & $3$ & $5/6$ & $17/18$ & $13/18$ & no\\
+$7$ & $3$ & $3/4$ & $11/12$ & $2/3$ & no\\
+$8$ & $3$ & $4/5$ & $14/15$ & $11/15$ & no\\
+$8$ & $4$ & $7/8$ & $31/32$ & $3/4$ & no\\
+$10$ & $5$ & $9/10$ & $49/50$ & $37/50$ & no\\
+\midrule
+$5$ & $3$ & $3/4$ & $11/12$ & $2/3$ & no\\
+\bottomrule
+\end{tabular}
+\caption{The published quotas (middle columns, from \cite[Proposition~2 and Table~1]{DissMahajne2020}) and the exact thresholds proved here. For $k\le r$ one has $q_1^*=q_2^*=q_0^{\DM}$, so $q_0^{\DM}$ already forces full acceptability and $q_1^{\DM}$ excludes nothing that $q_0^{\DM}$ does not. The last row is the odd boundary $k=r+1$, where the exact full-acceptability quota is $q_1^*=1$, not $q_0^{\DM}$; the row reports $q_0^{\DM}$ because that is the published bound being compared.}
+\label{tab:contrast}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lccccc}
+\toprule
+& $\ell=1$ & $\ell=2$ & $\ell=3$ & $\ell=4$ & $\ell=5$\\
+\midrule
+$K=10$, $k=5$ ($\eps=0$, $s=1$) & $9/10$ & $9/10$ & $5/6$ & $4/5$ & $37/50$\\
+$K=7$, $k=3$ ($\eps=1$, $s=2$) & $3/4$ & $3/4$ & $2/3$ & --- & ---\\
+$K=5$, $k=3$ (boundary, $\eps=1$, $s=1$) & $1$ & $3/4$ & $2/3$ & --- & ---\\
+\bottomrule
+\end{tabular}
+\caption{Full frontiers $q_\ell^*(K,k)$ from Theorem \ref{thm:hierarchy}. The first two rows are the regular regime of Corollary \ref{cor:hierarchy}: flat over the first two steps, then strictly decreasing by $\fl{(\ell-1)^2/4}/[\ell(K-k)]$. The last row is the odd boundary, where the frontier starts at $q_1^*=1$.}
+\label{tab:frontier}
+\end{table}
+
+\begin{example}[$K=6$, $k=3$]
+\label{ex:K6k3}
+Here $r=3$, $\eps=0$, $s=1$, $t=3$, so $q_0^{\DM}=q_1^*=q_2^*=5/6$ and $q_1^{\DM}=17/18\approx0.944$. By \eqref{eq:M} and \eqref{eq:candidate},
+\[
+q_3^*=1-\frac{M_{0,1}(3)}{3\cdot3}=1-\frac{1\cdot(1+1)+1/2}{9}=\frac{13}{18}\approx0.722 .
+\]
+Allowing a committee all of whose members are unacceptable therefore costs $13/18$, whereas requiring that no two members be unacceptable costs $5/6$; the published $q_0^{\DM}=5/6$ is thus the price of a strictly stronger requirement than the one it is attached to.
+\end{example}
+
+\begin{example}[$K=10$, $k=5$]
+\label{ex:K10k5}
+Here $r=5$, $\eps=0$, $s=1$, $t=5$; the published quotas are $q_0^{\DM}=9/10$ and $q_1^{\DM}=49/50$, and by \eqref{eq:M} with $m=2$,
+\[
+q_5^*=1-\frac{M_{0,1}(5)}{25}=1-\frac{2\cdot3+\tfrac12}{25}=1-\frac{13}{50}=\frac{37}{50}=0.74 .
+\]
+The exact full-acceptability quota is $9/10$, not $49/50$: the published remark that ``the value of $q_1$ reaches $98\%$ when $K=10$ and $k=5$'' \cite[p.~17]{DissMahajne2020} overstates the requirement by eight percentage points. The full frontier is in Table \ref{tab:frontier}.
+\end{example}
+
+\section{Committee sizes at and above the boundary}
+\label{sec:boundary}
+
+\subsection{The parity transition}
+
+It remains to treat the sizes not covered by Section \ref{sec:full}. Parity matters.
+
+\begin{itemize}
+\item If $K=2r$ is even then $\cl{K/2}=r$, so $k=r+1$ already satisfies $k>\cl{K/2}$ and falls under Theorem \ref{thm:boundary}(b); there is no intermediate case.
+\item If $K=2r+1$ is odd then $\cl{K/2}=r+1$; the size $k=r+1$ is the unique intermediate boundary, where both published quotas are below one ($q_0^{\DM}=1-\frac{1}{2r}$), weak unanimity suffices for full acceptability, and no $q<1$ does. Sizes $k\ge r+2$ fall under Theorem \ref{thm:boundary}(b).
+\end{itemize}
+
+\begin{theorem}[Boundary classification]
+\label{thm:boundary}
+Let $K\ge3$, $r=\fl{K/2}$, $\eps=K\bmod2$ and $q\in[1/2,1]$.
+\begin{enumerate}[label=(\alph*)]
+\item If $\eps=1$ and $k=r+1$, then every weak $1$-Condorcet committee of size $k$ is socially acceptable, while for every $q<1$ there is a strict $q$-Condorcet committee of size $k$ that is not socially acceptable. Hence $q_1^*(K,r+1)=1$.
+\item If $\cl{K/2}=r+\eps<k<K$, then for every $q\in[1/2,1]$ there is a weak $q$-Condorcet committee of size $k$ that is not socially acceptable, the same profile being strict $q$-Condorcet for every $q<1$. Hence $S_1(K,k)=\varnothing$ and $q_1^*(K,k)=+\infty$; no $q\in[1/2,1]$ suffices for full acceptability.
+\item If $k=K$, every $k$-set is $q$-Condorcet vacuously for every $q$, and complete unacceptability is impossible: summing over $a\in A$ gives $\sum_{a\in A}(B_a-A_a)=n(r-r)=0$ in every profile, so not all alternatives can satisfy $B_a>A_a$. The acceptability of the single candidate set $A$ is decided by the profile alone.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}[Proof of (a), sufficiency]
+Let $K=2r+1$, $k=r+1$ and let $C$ be weak $1$-Condorcet. Then $n_{ab}=n$ for every $a\in C$ and $b\in D$: in every ballot each member of $C$ is ranked above each nonmember. Since $\#C=r+1$ and $\#D=r$, the top $r+1$ positions are occupied by $C$ and the bottom $r$ by $D$. For odd $K$ the ranks $1,\dots,r$ are above the line and rank $r+1$ is on the line, so no member of $C$ is ever below it; thus $B_a=0\le A_a$ for every $a\in C$.
+\end{proof}
+
+\begin{proof}[Proof of (a), sharpness]
+Fix $q<1$, put $\delta=1-q>0$ and take an integer $n\ge3$ with $\delta n>1$. Let $C=\{a_1,\dots,a_{r+1}\}$ and $D=\{b_1,\dots,b_r\}$. Use one ballot of type
+\[
+a_2\succ\cdots\succ a_{r+1}\succ b_1\succ a_1\succ b_2\succ\cdots\succ b_r
+\]
+and $n-1$ ballots of type
+\[
+a_2\succ\cdots\succ a_{r+1}\succ a_1\succ b_1\succ b_2\succ\cdots\succ b_r .
+\]
+In the first ballot $a_1$ has rank $r+2$, below the line; in every other it has rank $r+1$, on the line. It is never above the line, so $A_{a_1}=0$, $B_{a_1}=1$ and $O_{a_1}=n-1$, and $a_1$ is unacceptable. For $j\ge2$, $a_j$ beats every $b\in D$ in every ballot, and so does $a_1$ against $b_j$ with $j\ge2$; for $(a_1,b_1)$ we have $n_{a_1b_1}=n-1>n-\delta n=qn$ because $\delta n>1$. Hence $C$ is strict $q$-Condorcet.
+\end{proof}
+
+\begin{proof}[Proof of (b)]
+Write $k=r+\eps+m$ with $m\ge1$; since $k<K$ we have $t=r-m\ge1$. Choose $a_1\in C$. In every ballot put $r$ members of $C\setminus\{a_1\}$ in the first $r$ positions, one further member of $C\setminus\{a_1\}$ at the on-line position $r+1$ when $\eps=1$, $a_1$ at rank $r+\eps+1$ (the first below-line rank), the remaining $m-1$ members of $C$ immediately after $a_1$, and all $t$ members of $D$ in the last $t$ positions; this is possible because $k=r+\eps+m$. Thus all $k$ members of $C$ occupy the top $k$ ranks and all nonmembers the bottom $t$ ranks, so $C$ beats every nonmember unanimously: it is weak $q$-Condorcet for every $q\le1$ and strict $q$-Condorcet for every $q<1$. Yet $a_1$ is below the line in all $n$ ballots and above it in none, so $B_{a_1}=n>A_{a_1}=0$.
+\end{proof}
+
+\subsection{The odd boundary: the published statement (b) fails there}
+\label{sec:boundaryfalse}
+
+At the odd boundary the published quotas are $q_0^{\DM}=1-\frac{1}{2r}$ and $q_1^{\DM}=\frac{q_0^{\DM}}{k}+\frac{k-1}{k}$, both below one. Their Proposition~2(b) therefore asserts, at these sizes, that every $q$-Condorcet committee with $q\ge q_1^{\DM}$ is socially acceptable; by Theorem \ref{thm:boundary}(a) no quota below one has that property. Combined with the explicit profiles below:
+
+\begin{proposition}[Refutation of \cite[Proposition~2(b)]{DissMahajne2020} at the odd boundary]
+\label{prop:boundaryfalse}
+Let $K=2r+1\ge3$ and $k=r+1$, so $q_0^{\DM}=1-\frac{1}{2r}<1$ and $q_1^{\DM}<1$. For every $q\in(q_1^{\DM},1)$ there is a finite profile and a committee $C$ of size $k$ that is a strict $q$-Condorcet committee and has an unacceptable member. Hence $q_1^{\DM}<1$ is not a sufficient quota for social acceptability at these sizes, and the exact quota is $q_1^*(K,r+1)=1$.
+\end{proposition}
+
+\begin{proof}
+By Theorem \ref{thm:boundary}(a), $q=1$ suffices and no $q<1$ does; the counterexample for each $q<1$ is the profile in the proof of Theorem \ref{thm:boundary}(a). Since $q_1^{\DM}<1$, every $q\in(q_1^{\DM},1)$ is such a $q$.
+\end{proof}
+
+\begin{example}[$K=3$, $k=2$: the smallest instance]
+\label{ex:K3}
+Let $C=\{a_1,a_2\}$, $D=\{b_1\}$ and $n=6$, with one ballot $a_2\succ b_1\succ a_1$ and five ballots $a_2\succ a_1\succ b_1$. Here $r=1$, so rank $1$ is above the line, rank $2$ on it and rank $3$ below it. Then $A_{a_1}=0$, $B_{a_1}=1$ and $O_{a_1}=5$, so $a_1$ is unacceptable, while $n_{a_1b_1}=5>\frac45\cdot6$ and $n_{a_2b_1}=6$. Hence $C$ is a strict $\frac45$-Condorcet committee, and $\frac45>\frac34=q_1^{\DM}(3,2)$: the published statement (b) fails at $(K,k)=(3,2)$, the smallest instance in the published table \cite[Table~1]{DissMahajne2020}.
+\end{example}
+
+\begin{example}[$K=5$, $k=3$: an explicit counterexample at $q=24/25>q_1^{\DM}=11/12$, $n=26$]
+\label{ex:counterexample}
+Let $C=\{a_1,a_2,a_3\}$ and $D=\{b_1,b_2\}$. Here $r=2$: ranks $1,2$ are above the line, rank $3$ on it and ranks $4,5$ below it. Take one voter with
+\[
+a_2\succ a_3\succ b_1\succ a_1\succ b_2
+\]
+and twenty-five voters with
+\[
+a_2\succ a_3\succ a_1\succ b_1\succ b_2 .
+\]
+For $j=2,3$, $a_j$ beats both nonmembers in all $26$ ballots; moreover $n_{a_1b_1}=25$, $n_{a_1b_2}=26$ and $qn=24.96$, so $C$ is a strict $24/25$-Condorcet committee. But $a_1$ is at rank $4$, below the line, in the first ballot and at rank $3$, on the line, in the other $25$; it is never above the line. Hence $A_{a_1}=0$, $B_{a_1}=1$, $O_{a_1}=25$ and $a_1$ is unacceptable. Since $24/25>11/12=q_1^{\DM}$, this refutes the published statement (b). The exact frontier at this size, from \eqref{eq:M} with $\eps=1$, $s=1$, $t=2$, is
+\[
+q_1^*=1,\qquad q_2^*=1-\frac{M_{1,1}(2)}{2\cdot2}=\frac34,\qquad
+q_3^*=1-\frac{M_{1,1}(3)}{3\cdot2}=1-\frac{2}{6}=\frac23 .
+\]
+\end{example}
+
+\begin{corollary}[Complete unacceptability at the odd boundary]
+\label{cor:boundary}
+Let $K=2r+1$ and $k=r+1$, and let $M_{1,1}$ be as in \eqref{eq:M}. Then
+\[
+q_k^*=1-\frac{M_{1,1}(k)}{kr},
+\qquad
+q_0^{\DM}=1-\frac{1}{2r}=1-\frac{1/2}{r},
+\]
+and therefore $q_k^*<q_0^{\DM}$ if and only if $M_{1,1}(k)/k>\frac12$. Since $M_{1,1}(k)/k=\frac{m}{2}$ for $k=2m$ and $=\frac{m(m+1)}{2m+1}$ for $k=2m+1$, we have $M_{1,1}(k)/k\ge\frac12$ always, with equality exactly when $k=2$, $m=1$, $r=1$, i.e.\ $(K,k)=(3,2)$. Hence $q_k^*<q_0^{\DM}$ for every odd-boundary size with $k\ge3$, and $q_k^*=q_0^{\DM}=\frac12$ at $(K,k)=(3,2)$.
+\end{corollary}
+
+\begin{proof}
+The formula for $q_k^*$ is Theorem \ref{thm:hierarchy} with $\ell=k$ and $t=r$; the two expressions for $M_{1,1}(k)/k$ are the last two branches of \eqref{eq:M}; and since $q_k^*=1-\frac{M_{1,1}(k)/k}{r}$ while $q_0^{\DM}=1-\frac{1/2}{r}$, the comparison reduces to $M_{1,1}(k)/k$ against $\frac12$, which is strict for $m\ge1$ odd and for $m\ge2$ even and an equality only at $m=1$, $k=2$.
+\end{proof}
+
+\begin{remark}[For sizes above the boundary]
+\label{rem:aboveboundary}
+For $r+\eps<k<K$ no $q\in[1/2,1]$ guarantees full acceptability (Theorem \ref{thm:boundary}(b)), so $q_1^*=+\infty$ there. The thresholds $q_\ell^*$ with $\ell<k$ may also be infinite at such sizes; we do not determine them, and our classification is confined to $k\le\cl{K/2}$. What can be said is that $q_k^*\le1$ always: at weak $q=1$ every ballot places all $k$ members of $C$ in the top $k$ ranks, so exactly $r$ members are above the line, $\eps$ on it and $m=k-r-\eps$ below it, whence $\sum_{a\in C}(B_a-A_a)=n(m-r)=n(k-K)<0$ and not all $k$ members can be unacceptable, so $1\in S_k(K,k)$.
+\end{remark}
+
+\begin{remark}[The single parity coincidence]
+\label{rem:paritycoincidence}
+The instance $(K,k)=(3,2)$ is the only \emph{odd-boundary} size at which $q_0^{\DM}$ equals the exact complete-unacceptability threshold; it is not the only size overall, since on $k\le r$ the same equality holds for $k\in\{1,2\}$ in both parities, e.g.\ at $(5,2)$ where $q_0^{\DM}=\frac23=q_2^*=Q(5,2)$. At $(3,2)$ the parity correction in \eqref{eq:DMpar} thus produces exactly the complete-unacceptability constant. It does \emph{not} produce the full-acceptability quota there: $q_1^*(3,2)=1$, while $Q(3,2)=q_0^{\DM}=\frac12$ is merely the algebraic expression that equals $q_1^*$ only on $k\le r$.
+\end{remark}
+
+\section{Relation to Diss and Mahajne (2020)}
+\label{sec:related}
+
+\subsection{Where the published quotas stand}
+
+On the range where $q_0^{\DM}<1$ we have
+\[
+q_1^{\DM}-q_0^{\DM}=\frac{k-1}{k}\bigl(1-q_0^{\DM}\bigr)\ge0,
+\]
+with equality only at $k=1$; for $k>(K+2)/2$ one has $q_0^{\DM}>1$ and the comparison is vacuous. Our results give the following picture.
+
+\begin{enumerate}[label=(\roman*)]
+\item \textbf{Full acceptability.} On $1\le k\le r$ the exact quota is $q_0^{\DM}$ itself (Theorems \ref{thm:suff} and \ref{thm:sharp}). Statement (b) of \cite{DissMahajne2020} is therefore true on this range but not optimal: $q_1^{\DM}$ exceeds the exact quota for every $k>1$. Only the word ``optimal'' in (c) is at stake here.
+\item \textbf{Odd boundary.} For odd $K$ and $k=r+1$ the exact quota is $1$ (Theorem \ref{thm:boundary}(a)), so statement (b) is false there for every odd $K\ge3$; the smallest instance is $K=3$, $k=2$ with $q_1^{\DM}=\frac34$ (Example \ref{ex:K3}), and Example \ref{ex:counterexample} gives $K=5$, $k=3$ at $q=24/25>11/12$. Because the strict convention of \cite{DissMahajne2020} excludes $q=1$, the correct answer at these sizes cannot be expressed within that convention.
+\item \textbf{Complete unacceptability.} On $1\le k\le r$ the exact quota is $q_k^*=q_0^{\DM}-\fl{(k-1)^2/4}/[k(K-k)]$, so statement (a) is true and optimal for $k\in\{1,2\}$ in both parities and non-optimal for every $3\le k\le r$ (Table \ref{tab:contrast}). At the odd boundary the same conclusion holds for $k\ge3$, with equality at $(3,2)$ (Corollary \ref{cor:boundary}).
+\item \textbf{Intermediate numbers.} For $3\le\ell\le k$ the exact quota is strictly below both published ones, and no statement of \cite{DissMahajne2020} addresses these $\ell$.
+\end{enumerate}
+
+\subsection{Where $q_1^{\DM}$ comes from}
+\label{sec:source}
+
+The averaging form of the published quota, $q_1^{\DM}=[q_0^{\DM}+(k-1)]/k$, has its origin in the proof of Proposition~2(b) in the working paper \cite[pp.~10--11]{DissMahajne2019}; the journal article does not print the proof.
+
+In that proof, statement (a) is established by considering a single member $c_j$, and in Case~2 the sharper odd-$K$ bound $W_\pi(c_j)<n(3K-2k-3)/4$ is derived and then relaxed to the parity-free $n(3K-2k-2)/4$. The published statement \eqref{eq:DMpar} carries the parity term, so the relaxation is a loss of sharpness inside the working-paper argument and not an error in the published quota.
+
+For statement (b) the proof repeats the single-member estimate for all $k$ members, but instead of comparing $\sum_j W_\pi(c_j)$ with the $q$-Condorcet lower bound $k(K-k)qn$, it bounds $k-1$ of the members by the universal maximum $n(K-k)$ and keeps one member at the improved estimate. Algebraically this replaces the per-member deficit by
+\[
+\frac{q_0^{\DM}}{k}+\frac{k-1}{k}=q_1^{\DM}.
+\]
+The correct per-member comparison is the case $\ell=1$ of Theorem \ref{thm:hierarchy} (Theorem \ref{thm:suff}), and the correct comparison for complete unacceptability is the case $\ell=k$, whose crowd-out term is invisible to any estimate that treats the members independently. The boundary failure in (b) is a separate matter, and it is not a failure of unacceptability: an unacceptable member has $B_a>A_a$ by definition. What fails at $k=r+1$ is that the excess can be minimal --- $B_a-A_a=1$ with $O_a=n-1$ --- and that on-line placements force no defeats there, since the per-ballot contribution of an on-line member in Lemma \ref{lem:single} is $s-1=0$. In the working-paper algebra this is the point at which the coefficient multiplying $O_a$ vanishes, so the estimate degenerates to the trivial one and yields no bound below $1$.
+
+\subsection{The $(4,2)$ tightness example: what it does and does not show}
+
+The example in \cite[p.~11]{DissMahajne2019}, whose conclusion is asserted without proof in \cite[Proposition~2(c)]{DissMahajne2020}, is instructive once written cleanly. Fix $q<q_0^{\DM}(4,2)=\frac34$ and choose a positive integer $m$ with $q<\frac{9m}{12m+1}$; this is possible since $\frac{9m}{12m+1}\uparrow\frac34$. Take $n=12m+1$ voters consisting of $3m$ copies each of
+\[
+a\succ d\succ b\succ c,\quad a\succ c\succ b\succ d,\quad b\succ c\succ a\succ d,\quad b\succ d\succ a\succ c,
+\]
+and one copy of $c\succ d\succ a\succ b$. Every pairwise margin from $\{a,b\}$ to $\{c,d\}$ equals $9m>qn$, so $\{a,b\}$ is a strict $q$-Condorcet committee, while each of $a$ and $b$ is above the line in $6m$ ballots and below it in $6m+1$, so the committee is completely unacceptable.
+
+Two observations. At $K=4$, $k=2$ we have $q_2^*=q_1^*=q_0^{\DM}=\frac34$ by Corollary \ref{cor:hierarchy}, so the example does witness sharpness of the exact quota there. What it does \emph{not} do is witness sharpness of $q_1^{\DM}=7/8$: since a completely unacceptable strict $q$-committee is in particular not socially acceptable, the example does give the lower bound $\frac34$ for the full-acceptability quota at $(4,2)$, but it is compatible with the exact value $\frac34<q_1^{\DM}$. Nor can it witness sharpness of $q_0^{\DM}$ for complete unacceptability at any $3\le k\le r$, where the exact quota is strictly smaller: it is tight only because the crowd-out term $\fl{(k-1)^2/4}$ vanishes at $k=2$.
+
+\subsection{Consistency with Mahajne and Volij}
+
+At $k=1$, $Q(K,1)=q_0^{\DM}(K,1)=(3K-4)/(4K-4)$ for even $K$ and $(3K-5)/(4K-4)$ for odd $K$, the quota of \cite{MahajneVolij2019}; the construction of Theorem \ref{thm:sharp} reduces to the sharpness construction printed there for even $K$ and supplies the odd-$K$ case that paper leaves to the reader. We record this as a consistency check, not as a result: the committee quotas of \cite{DissMahajne2020} and the single-winner quota of \cite{MahajneVolij2019} are one family, and the frontier at $\ell=k=1$ degenerates to the single-winner statement.
+
+\subsection{Adjacent literature}
+\label{sec:related-lit}
+
+\subsubsection*{Contrasted committee concepts}
+Definitions are compared in Remark \ref{rem:conjunctive}: the conjunctive condition of this paper, the disjunctive Condorcet winning set of Elkind, Lang and Saffidine \cite{ElkindLangSaffidine2015} and its comparison with local stability in Aziz, Elkind, Faliszewski, Lackner and Skowron \cite{AzizEtAl2017}, and the set-valued or ranking-based notions of Barberà and Coelho \cite{BarberaCoelho2008} (non-controversial lists), Kaymak and Sanver \cite{KaymakSanver2003} (sets as Condorcet winners, undominated sets), Ratliff \cite{Ratliff2003} (closeness to the Condorcet committee) and Kamwa \cite{Kamwa2017} (stability of committee rules). The last group works at $q=1/2$ or with setwise comparisons, and none of these papers asks an acceptability question or defines a family of quotas.
+
+\subsubsection*{Acceptability, approval of the top half, and compromise}
+Mahajne and Volij \cite{MahajneVolij2018} introduce social acceptability and characterise a scoring rule selecting acceptable alternatives; \cite{MahajneVolij2019} and \cite{DissMahajne2020} supply the single-winner and committee quotas; Diss, Gassi and Moyouwou \cite{DissGassiMoyouwou2023} relate acceptability to the majoritarian compromise rule. The top-half logic is older: Sertel and Yılmaz \cite{SertelYilmaz1999} define majoritarian approval of an alternative as a majority placing it in the better effective half, with critical degree at most $\fl{m/2}$, and Merlin, \"Ozkal Sanver and Sanver \cite{MerlinEtAl2019} revisit compromise rules trading the quantity of support against the depth at which it is obtained. Both are ancestors of the above-the-line test; neither states a pairwise qualified-majority committee condition or grades a committee by the number of its unacceptable members. The nearest later work from the same group is Awde, Diss, Kamwa, Rolland and Tlidi \cite{AwdeEtAl2023}, which estimates by enumeration and simulation, under IC and IAC, how often simple single-winner rules elect a socially unacceptable \emph{candidate}; it counts unacceptable candidates in the whole set for probabilistic purposes and states no committee quota and none indexed by $\ell$.
+
+\subsubsection*{Qualified majorities without acceptability}
+Baharad and Nitzan \cite{BaharadNitzan2003} and Courtin, Martin and Moyouwou \cite{CourtinEtAl2015} study $q$-Condorcet consistency and $q$-majority efficiency of positional rules for a single winner; Courtin, Martin and Tchantcho \cite{CourtinMartinTchantcho2015} use a different convention again, in which an alternative is $q$-majority beaten when some other alternative is preferred to it by a fraction at least $q$; Gassi and Kamwa \cite{GassiKamwa2025} study $q$-fixed majority efficiency of committee scoring rules, where $q$ is the size of a bloc ranking a committee at the top and not a pairwise margin. None involves the line.
+
+\subsubsection*{Scope of the novelty claim}
+\label{sec:limits}
+The claim of this paper is that the frontier $q_\ell^*$ and its three corollaries are not in the literature cited here, this bibliography being the corpus to which the claim is relative. The nearest further work by the same authors is Mahajne and Volij's study of the individually acceptable choice correspondence \cite{MahajneVolij2020}, which axiomatises, for a single decision-maker choosing from menus, the correspondence returning the alternatives whose rank in the menu is at or below the menu's median rank; its axioms are Median and WrARP (the latter a weakening of WARP, after Jamison and Lau). It has no profile of voters, no $q$-Condorcet committee and no threshold indexed by a number of unacceptable members, so it does not bear on the frontier. Beyond this, we have not carried out a systematic database forward-citation search of \cite{DissMahajne2020} or \cite{MahajneVolij2019}, and we assert no priority over work not cited here; targeted searches during the preparation of this paper surfaced no anticipation of the frontier.
+
+\section{Concluding remarks}
+\label{sec:conclusion}
+
+\subsection{Summary}
+
+On the range on which Diss and Mahajne's quotas fall below unanimity, and for committee sizes $k\le\cl{K/2}$, the qualified-majority frontier is determined in full. The full-acceptability quota is their own
+\[
+q_1^*(K,k)=q_0^{\DM}=\frac{3K-2k-2-(K\bmod2)}{4(K-k)},\qquad 1\le k\le \fl{K/2},
+\]
+and their larger quota $q_1^{\DM}$ is optimal for no $k\ge2$. More generally, the least quota guaranteeing fewer than $\ell$ unacceptable members is
+\[
+q_\ell^*(K,k)=1-\frac{M_{\eps,s}(\ell)}{\ell(K-k)},
+\]
+with $M_{\eps,s}$ as in \eqref{eq:M}; for $2\le k\le r$ this gives $q_1^*=q_2^*=q_0^{\DM}$ and the strict improvement
+\[
+q_\ell^*=q_0^{\DM}-\frac{\fl{(\ell-1)^2/4}}{\ell(K-k)}\qquad(3\le\ell\le k).
+\]
+The exact complete-unacceptability quota is $q_k^*$, which equals $q_0^{\DM}$ for $k\in\{1,2\}$ and is strictly smaller for $3\le k\le r$, so that the optimality clause of \cite[Proposition~2(c)]{DissMahajne2020} fails there by a wide margin (Table \ref{tab:contrast}). At the odd boundary $k=(K+1)/2$ the exact full-acceptability quota is weak unanimity, the published statement (b) is false, and the published complete-unacceptability quota is again non-optimal except at $(K,k)=(3,2)$.
+
+\subsection{The methodological point}
+
+Unacceptability is an average condition --- a count of below-line against above-line placements --- while defeat is a counting condition over pairs. The two interact nonlinearly once several members are below the line simultaneously: $k$ unacceptable members force cross-defeats that one member does not, and the resulting saving is exactly the convex-envelope argument of Lemma \ref{lem:block} and Section \ref{sec:hierarchy}. That is why the frontier is flat over its first step --- one unacceptable member already costs as much as two, since a single member's excess carries no crowd-out --- and strictly decreasing afterwards, and why the odd boundary, where on-line placements let a member be unacceptable at zero per-ballot deficit, behaves differently.
+
+\subsection{Open directions}
+
+Three questions seem natural. First, the domain restrictions of \cite{DissMahajne2020} (single-peaked, single-crossing, single-caved, group-separable) suggest an analogous graded question: how many unacceptable members a $q$-Condorcet committee must contain under each restriction. Whether the counting arguments here transfer, with $s$ replaced by the corresponding restricted constant, is not obvious and we pose it as a question. Second, in the strict convention of \cite{DissMahajne2020} the admissible quotas form the half-open interval $[1/2,1)$, so at the odd boundary no admissible quota attains full acceptability; a designer working in that convention should be told that full acceptability there requires the weak convention. Third, the IAC computations of \cite{DissMahajne2020} count the number of unacceptable members in ordinary Condorcet committees; combining them with the frontier here would require new profile-counting work, since the frontier prices guarantees and the IAC results price probabilities, but such a combination would let one report the distribution of the number of unacceptable members for committees known to be $q$-Condorcet.
+
+\appendix
+
+\section{Notation index}
+\label{app:notation}
+
+\begin{center}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.26\textwidth}>{\raggedright\arraybackslash}p{0.64\textwidth}}
+\toprule
+$K$ & number of alternatives\\
+$k$, $C$ & committee size and the committee\\
+$D$, $t=K-k$ & complement of $C$ and its size\\
+$r=\fl{K/2}$ & half-range\\
+$\eps=K\bmod 2$ & parity indicator\\
+$s=r-k+1+\eps$ & defeat/deficit parameter\\
+$n_{ab}$ & number of voters preferring $a$ to $b$\\
+$A_a,B_a,O_a$ & above-, below- and on-line placement counts of $a$\\
+$W_\pi(a)$ & $\sum_{d\in D}n_{ad}$, total wins of $a$ against nonmembers\\
+$w_i(a)$ & $\#\{d\in D: a\succ_i d\}$, wins of $a$ against nonmembers in ballot $i$\\
+$U$, $\ell$ & a set of $\ell$ designated (unacceptable) members\\
+$b_i,o_i,u_i$ & numbers of members of $U$ below, on and above the line in $\succ_i$\\
+$D_i(U)$ & number of pairs $(a,d)\in U\times D$ with $d$ beating $a$ in $\succ_i$\\
+$\psi(b,o)$, $x(b,o)$ & $(b+o)(s-1+b)$ and $b+o/2$\\
+$\uw_{\eps,s}$ & lower convex envelope of the state points $A_b$, $B_b$\\
+$M_{\eps,s}(\ell)$ & envelope value at $\ell/2$, formula \eqref{eq:M}\\
+$Q(K,k)=1-s/(2t)$ & algebraic threshold, equal to $q_0^{\DM}$; equals $q_1^*$ for $k\le r$ only\\
+$\bar q_\ell(K,k)$ & candidate formula \eqref{eq:candidate}, proved equal to $q_\ell^*$\\
+$q_\ell^*(K,k)$ & exact threshold for fewer than $\ell$ unacceptable members; $\inf\varnothing=+\infty$\\
+$q_0^{\DM},q_1^{\DM}$ & the quotas of \cite{DissMahajne2020}, formula \eqref{eq:DMpar}\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{thebibliography}{99}
+
+\bibitem{AwdeEtAl2023} Awde, A., Diss, M., Kamwa, E., Rolland, J. Y. and Tlidi, A. (2023). Social unacceptability for simple voting procedures. In S. Kurz, N. Maaser and A. Mayer (eds), \emph{Advances in Collective Decision Making}, Studies in Choice and Welfare, Springer, Cham, 25--42. \url{https://doi.org/10.1007/978-3-031-21696-1_3}.
+
+\bibitem{AzizEtAl2017} Aziz, H., Elkind, E., Faliszewski, P., Lackner, M. and Skowron, P. (2017). The Condorcet principle for multiwinner elections: from shortlisting to proportionality. In \emph{Proceedings of the Twenty-Sixth International Joint Conference on Artificial Intelligence (IJCAI-17)}, 84--90.
+
+\bibitem{BaharadNitzan2003} Baharad, E. and Nitzan, S. (2003). The Borda rule, Condorcet consistency and Condorcet stability. \emph{Economic Theory}, 22(3), 685--688. \url{https://doi.org/10.1007/s00199-002-0318-3}.
+
+\bibitem{BarberaCoelho2008} Barberà, S. and Coelho, D. (2008). How to choose a non-controversial list with $k$ names. \emph{Social Choice and Welfare}, 31(1), 79--96.
+
+\bibitem{CourtinEtAl2015} Courtin, S., Martin, M. and Moyouwou, I. (2015). The $q$-majority efficiency of positional rules. \emph{Theory and Decision}, 79(1), 31--49. \url{https://doi.org/10.1007/s11238-014-9451-2}.
+
+\bibitem{CourtinMartinTchantcho2015} Courtin, S., Martin, M. and Tchantcho, B. (2015). Positional rules and $q$-Condorcet consistency. \emph{Review of Economic Design}, 19(3), 229--245.
+
+\bibitem{DissGassiMoyouwou2023} Diss, M., Gassi, C. G. and Moyouwou, I. (2023). Social acceptability and the majoritarian compromise rule. \emph{Social Choice and Welfare}, 61(3), 489--510. \url{https://doi.org/10.1007/s00355-023-01464-4}.
+
+\bibitem{DissMahajne2019} Diss, M. and Mahajne, M. (2019). Social acceptability of Condorcet committees. GATE Working Paper 1906 (January 2019); also circulated as HAL working papers halshs-02003292 and halshs-02011732. \url{https://ssrn.com/abstract=3327169}. Contains the proof of Proposition~2, which the published version does not print.
+
+\bibitem{DissMahajne2020} Diss, M. and Mahajne, M. (2020). Social acceptability of Condorcet committees. \emph{Mathematical Social Sciences}, 105, 14--27. \url{https://doi.org/10.1016/j.mathsocsci.2020.03.004}.
+
+\bibitem{ElkindLangSaffidine2015} Elkind, E., Lang, J. and Saffidine, A. (2015). Condorcet winning sets. \emph{Social Choice and Welfare}, 44(3), 493--517.
+
+\bibitem{GassiKamwa2025} Gassi, C. G. and Kamwa, E. (2025). $q$-fixed majority efficiency of committee scoring rules. \emph{Operations Research Letters}, 61, 107282. \url{https://doi.org/10.1016/j.orl.2025.107282}.
+
+\bibitem{Gehrlein1985} Gehrlein, W. V. (1985). The Condorcet criterion and committee selection. \emph{Mathematical Social Sciences}, 10(3), 199--209.
+
+\bibitem{Kamwa2017} Kamwa, E. (2017). On stable rules for selecting committees. \emph{Journal of Mathematical Economics}, 70, 36--44.
+
+\bibitem{KaymakSanver2003} Kaymak, B. and Sanver, R. (2003). Sets of alternatives as Condorcet winners. \emph{Social Choice and Welfare}, 20(3), 477--494.
+
+\bibitem{MahajneVolij2018} Mahajne, M. and Volij, O. (2018). The socially acceptable scoring rule. \emph{Social Choice and Welfare}, 51(2), 223--233. \url{https://doi.org/10.1007/s00355-018-1113-9}.
+
+\bibitem{MahajneVolij2019} Mahajne, M. and Volij, O. (2019). Condorcet winners and social acceptability. \emph{Social Choice and Welfare}, 53(4), 641--653. \url{https://doi.org/10.1007/s00355-019-01204-7}.
+
+\bibitem{MahajneVolij2020} Mahajne, M. and Volij, O. (2020). The individually acceptable choice correspondence. Discussion Paper No.~20-15, Monaster Center for Economic Research, Ben-Gurion University of the Negev. \url{https://www.bgu.ac.il/media/doebvcy5/2015.pdf}.
+
+\bibitem{MerlinEtAl2019} Merlin, V., \"Ozkal Sanver, I. and Sanver, R. (2019). Compromise rules revisited. \emph{Group Decision and Negotiation}, 28(1), 63--78.
+
+\bibitem{Ratliff2003} Ratliff, T. C. (2003). Some startling inconsistencies when electing committees. \emph{Social Choice and Welfare}, 21(3), 433--454.
+
+\bibitem{SertelYilmaz1999} Sertel, M. R. and Y{\i}lmaz, B. (1999). The majoritarian compromise is majoritarian-optimal and subgame-perfect implementable. \emph{Social Choice and Welfare}, 16(4), 615--627.
+
+\end{thebibliography}
+
+\end{document}
