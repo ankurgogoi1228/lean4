@@ -121,6 +121,19 @@ conclusion. I read each `+` line against the rest of the manuscript and against 
 No `+` line asserts anything new about the mathematics. The change is prose and one unused
 assignment, as represented. ✅
 
+**Byte identity — corroborated by the hash manifest.** The provenance record publishes SHA-256 for
+all fourteen files. I checked the manifest itself rather than taking it on trust: all fourteen are
+valid 64-hex digests, there are thirteen distinct values, and there is **exactly one collision** —
+`ce704e8df057477b…` for `Sharp_Threshold_q_Condorcet_Social_Acceptability.tex` *and*
+`…_v3.tex`. Equal digests establish that those two files are byte-identical, so the `cmp` claim is
+independently corroborated even though neither file is here. `…_v2.tex` carries a distinct digest
+(`023ca38ae1f9364f…`), and no other pair collides, so no two supposedly-distinct files were
+silently the same. ✅
+
+Combined with the zero-drift diff shape and the 749/749 line counts, this is as far as the
+`v2 → v3` transition can be pinned down without the files: identity of v3 with the formal source ✅,
+seven prose paragraphs changed and nothing else ✅.
+
 **Structural invariants, spot-checked against the v3 source supplied earlier.** One
 `thebibliography`, nine `\bibitem`s, one `enumerate` (intro contributions), three `itemize` (the two
 envelope regimes; the §6 parity transition; the two Thm 3(b) boundary state families), no standalone
@@ -129,12 +142,16 @@ consistent with the reported invariants.
 
 ### What I still could not verify
 
-- **Byte-identity and provenance claims**: that v3 is `cmp`-identical to `P.tex`, that v2 was
-  produced from `/tmp/paper_before_final_nits.md` by the same generator, and the SHA-256 manifest.
-  These need the files. (The zero-drift diff shape is strong circumstantial support for the
-  generator claim, since a different generator would almost certainly reflow other lines.)
-- **Rendering**: the 9-page count, the `.docx`, and the `.pdf` (reported as a plain-text rendering,
-  not a typeset journal PDF — that matters if this is going out for review).
+- **Rendering, and this one is material.** `P.pdf` is a plain-text `reportlab` rendering and
+  `P.docx` a verbatim Courier rendering; neither is typeset. **The 9-page count therefore describes a
+  plain-text artefact, not a typeset article**, and the package is *not* submission-ready even though
+  the `.tex` is correct. I confirmed there is no TeX engine in this sandbox either
+  (`pdflatex`, `xelatex`, `lualatex`, `tectonic`, `latexmk`, `pandoc` all absent, and no `reportlab`),
+  so I cannot produce a typeset build from here. A real PDF needs a TeX installation — a separate
+  build step, not a correction to the paper.
+- **Provenance of the generator run** (`make_v2_tex.py` reproducing v2 from the persisted Markdown).
+  The zero-drift diff shape is strong circumstantial support — a different generator would almost
+  certainly have reflowed other lines — but not a proof.
 
 ## 4. §2–§3 Definitions and the two counting lemmas
 
