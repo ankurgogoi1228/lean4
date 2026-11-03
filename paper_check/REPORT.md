@@ -15,7 +15,8 @@ Report dated 3 November 2026 · **audits the v1, v2 and v3 (polished) manuscript
 | "odd boundary `k=2`" ambiguity | — | ✗ one phrase, two cases | ✅ both cases named |
 | Thm 4(a) stray "set `M=1`" | ✗ | ✗ | ✅ removed |
 | Remark 2's `s/2` vs `s−ε` | vague | vague | ✅ clarified (algebra verified) |
-| Exact assertions checked | 20 598 | 21 019 | **22 207** |
+| v2→v3 `.tex` diff | — | — | ✅ reviewed: 6 hunks, 7 paragraphs, prose only |
+| Exact assertions checked | 20 598 | 21 019 | **22 796** |
 | Failures | 0 | 0 | **0** |
 
 Artifacts: `paper_check/paper_claims.py` (per-statement audit keyed to the paper's own labels),
@@ -28,7 +29,7 @@ Artifacts: `paper_check/paper_claims.py` (per-statement audit keyed to the paper
 
 | Layer | Method | Scope | Result |
 |---|---|---|---|
-| **A. Every displayed statement** | exact rational arithmetic, keyed to the paper's labels | `K = 3…40`, all admissible `k`, all `1 ≤ ℓ ≤ k` | **22 207 assertions, 0 failures** |
+| **A. Every displayed statement** | exact rational arithmetic, keyed to the paper's labels | `K = 3…40`, all admissible `k`, all `1 ≤ ℓ ≤ k` | **22 796 assertions, 0 failures** |
 | **B. Lemma 2** | brute-force enumeration of *every* ballot | `K = 3,4,5` (bounds), `K = 5,7` (tightness); all `k`, all `a`, all `K!` permutations | ✅ no counterexample; bounds attained |
 | **C. The model itself** | exact rational LP over *all* profiles | `K = 3…6`, every `(k,ℓ)` | ✅ optimum `= q_ℓ*` in every case |
 | **D. Constructions** | explicit integer profiles | Thm 2 (`K ≤ 8`), Thm 3(b) (`K ≤ 8`), Thm 4, Ex. 1–2 | ✅ all behave as claimed |
@@ -89,15 +90,51 @@ This is *stronger* than v2's `3 ≤ k ≤ r` and still correct: for odd `K` and 
 (on the line) are **attained** by some ballot for every `k` at `K = 5,7`, so they are best possible
 per-ballot statements — which is what makes the §5 envelope sharp rather than merely valid. ✅
 
-### What I could not verify
+**4. The last link in Remark 2's chain.** The clause implicitly asserts two thresholds. Retaining
+`s/2` gives threshold `1 − (s/2)/t = q^*`; relaxing to `s/2 − ε/4` gives
+`1 − (s/2 − ε/4)/t = q_0` — so the relaxation turns the sharp `q^*` into exactly Diss–Mahajne's
+`q_0`, which is the whole content of the diagnosis. Both identities verified for every `K ≤ 40`,
+every `k ≤ r`, odd `K` for the second. ✅
 
-The packaged deliverables (`Sharp_Threshold_q_Condorcet_Social_Acceptability.{tex,md,docx,pdf}`,
-`Research_Gap_Novelty_Audit.md`) live in a **different sandbox** and are absent from this one, so I
-cannot check the rendering, the 9-page count, the Word/PDF conversion, or the statement that *only*
-those three passages changed. That last one is the only claim that would matter, and it needs a diff
-of the two `.tex` files, which I do not have. I can confirm the mathematics of the passages as
-described; I cannot confirm the packaging. If both `.tex` files are placed here I will diff them
-statement by statement.
+### (d) The v2→v3 `.tex` diff — reviewed
+
+The two `.tex` files are in the other sandbox, but the unified diff was supplied in full, so the
+*content* of the change is checkable even though the files are not.
+
+**Shape.** Six hunks, seven changed paragraphs, and every hunk has the same start line and the same
+length on both sides (`-32,7/+32,7`, `-60,7/+60,7`, `-211,7/+211,7`, `-571,7/+571,7`,
+`-640,13/+640,13`, `-720,7/+720,7`). That is a pure in-place replacement of seven paragraphs with
+**no insertions and no deletions anywhere**, so no line number downstream can have shifted — which
+independently supports "no other line differs" and the unchanged page count. ✅
+
+**Content.** All seven are the expected ones, in the expected places: abstract, introduction
+contribution 3, Remark 2, Thm 4(a)'s sharpness proof, §7.1 first paragraph, §7.1 second paragraph,
+conclusion. I read each `+` line against the rest of the manuscript and against the algebra above:
+
+- the five `k=2` disambiguations all state only facts I had already verified — `q_comp* = q_0` fails
+  for odd `K` at `k=2` both in range (`K ≥ 5`) and at the boundary (`K = 3`); ✅
+- the §7.1 strengthening from `3 ≤ k ≤ r` to `2 ≤ k ≤ r` is correct (and strictly stronger) ✅;
+- Remark 2's new sentences are all identities I verified above, including the `q^* → q_0` link ✅;
+- the Thm 4(a) deletion removes an assignment to `M` that is never referenced again in that proof —
+  the exceptional ballot and the `n−1` ordinary ones carry the argument alone ✅.
+
+No `+` line asserts anything new about the mathematics. The change is prose and one unused
+assignment, as represented. ✅
+
+**Structural invariants, spot-checked against the v3 source supplied earlier.** One
+`thebibliography`, nine `\bibitem`s, one `enumerate` (intro contributions), three `itemize` (the two
+envelope regimes; the §6 parity transition; the two Thm 3(b) boundary state families), no standalone
+References heading, and the starred thresholds (`q^*`, `q_ℓ^*`, `q_1^*`, `q_comp^*`) intact — all
+consistent with the reported invariants.
+
+### What I still could not verify
+
+- **Byte-identity and provenance claims**: that v3 is `cmp`-identical to `P.tex`, that v2 was
+  produced from `/tmp/paper_before_final_nits.md` by the same generator, and the SHA-256 manifest.
+  These need the files. (The zero-drift diff shape is strong circumstantial support for the
+  generator claim, since a different generator would almost certainly reflow other lines.)
+- **Rendering**: the 9-page count, the `.docx`, and the `.pdf` (reported as a plain-text rendering,
+  not a typeset journal PDF — that matters if this is going out for review).
 
 ## 4. §2–§3 Definitions and the two counting lemmas
 
@@ -207,8 +244,9 @@ for `m = 1,2,3,10`).
    that their sharper odd-`K` bound `n(3K−2k−3)/4` is the paper's `q^*` in disguise. But it is a
    statement about the internal structure of a proof in halshs-02003292 / halshs-02011732, which I
    cannot consult. **Plausible, not verified. Nothing else in the paper depends on it.**
-2. **(Minor, not mine to press.)** The packaged files' claim that only the three named passages
-   changed is not checkable here (see §3, "What I could not verify").
+2. **(Now resolved.)** The claim that only those passages changed is supported by the diff shape
+   (§3(d)): six same-length in-place hunks, no insertions or deletions. What remains unchecked is
+   byte-identity/provenance and the rendered outputs (§3, "What I still could not verify").
 
 Items 2–4 of my earlier list — the "odd boundary `k=2`" ambiguity, the stray "set `M=1`", and
 Remark 2's compressed phrasing — are all **resolved in v3**, and the new Remark 2 clause is
@@ -255,7 +293,7 @@ My first report was written from a reconstruction of the paper before the source
 
 ```bash
 cd lean4/paper_check
-python3 paper_claims.py          # per-statement audit keyed to the paper's labels → 22207 / 0
+python3 paper_claims.py          # per-statement audit keyed to the paper's labels → 22796 / 0
 python3 check_all.py             # the §2–§5 formula sweep, K = 3..40                → 0 failed
 python3 verify_constructions.py  # explicit profiles: Thm 2, 3(b), 4, Ex. 1–2         → out1.txt
 ```

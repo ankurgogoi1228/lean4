@@ -251,6 +251,16 @@ for K in KS:
             ck(4 * t_(K, k) - 2 * s_(K, k) == 3 * K - 2 * k - 3,
                'v3 Remark 2: 4(t-s/2) = 3K-2k-3 (odd K)', f'K={K} k={k}')
 
+# v3 Remark 2, closing link: the two bounds give exactly q* and q_0 as thresholds.
+# Retaining s/2 -> threshold 1 - (s/2)/t = q*;  relaxing to s/2 - eps/4 -> threshold 1 - (s/2-eps/4)/t = q_0.
+for K in KS:
+    for k in range(1, r_(K) + 1):
+        ck(1 - F(s_(K, k), 2 * t_(K, k)) == qstar(K, k),
+           'v3 Remark 2: retained bound yields q*', f'K={K} k={k}')
+        if e_(K) == 1:
+            ck(1 - (F(s_(K, k), 2) - F(1, 4)) / t_(K, k) == q0(K, k),
+               'v3 Remark 2: relaxed bound yields q_0 (odd K)', f'K={K} k={k}')
+
 # v3 7.1: for odd K, q_0 is loose for complete unacceptability for ALL 2 <= k <= r
 for K in range(5, 40, 2):
     for k in range(2, r_(K) + 1):
