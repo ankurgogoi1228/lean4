@@ -331,6 +331,42 @@ the `k=2` disambiguation present in all four places (abstract, introduction, §7
 
 **GREEN FLAG** on the mathematics and the manuscript text, scoped as in the header.
 
+### Note: the GREEN FLAG does not extend to the plain-language rewrite
+
+A subsequent "plain-language" rewriting of the manuscript was submitted for check. It was **not**
+approved. **The mathematics is untouched** — I re-read every statement against v3 and re-ran the
+audit (22 796 assertions, 0 failures), and the two worked examples added by the rewrite are both
+correct (`K=4,k=1`: `s=2,t=3,q*=2/3` ✅; `A_a=10,B_a=10,O_a=6` acceptable with only 10 of 26
+above the line ✅). The damage is entirely textual, and it is severe:
+
+*Blocking*
+1. **Theorem 1's proof is truncated.** It ends "Lemma 1 gives `[…]` Lemma 1 gives" and then jumps to
+   Remark 2. The contradiction and the `\square` are gone; as printed, Theorem 1 is unproved.
+2. **§7.1 is scrambled.** "For even `K`, `ε=0` and" appears twice around its own display; the odd-`K`
+   sentence that introduces `q^* = q_0 − 1/(4t) < q_0 ≤ q_1` now sits *after* that display, with an
+   unrelated sentence wedged between them; "Their first bound…" has lost its antecedent.
+3. **The Conclusion is garbled.** "…is *with* `M_{ε,s}(ℓ)` given in Section 5" — a duplicated clause
+   left dangling.
+4. **§6 opens with the same paragraph twice** ("We now study committee sizes…" / "Some committee
+   sizes are not covered by `q^*`…").
+5. **§2 defines `A_a, B_a` twice, and `D, t, w_i, W_π` twice** (display, then repeated in words).
+6. **The five contributions collapsed into a single `\item`** — the text still says "This paper does
+   five things" but the `enumerate` has one item.
+
+*Cosmetic, but systematic* — a mechanical "therefore → so" substitution left broken English:
+"The lower envelope **is so** the piecewise-linear interpolation"; "Sharpness statements below **are
+so restricted**"; "It **is so** weak `q`-Condorcet"; plus a stray double comma ("To see this,,") and
+a missing full stop before "No member of `U` is on the line."
+
+*Abstract* — "for every `K≥3` and every `1≤k≤⌈K/2⌉` used by Diss and Mahajne" has a dangling
+modifier, and "a straight-line lower bound for a finite counting problem" is a poor and slightly
+misleading rendering of the convex-envelope argument (the bound is a piecewise-linear *convex
+envelope*, and calling it a "counting problem" invites exactly the computational reading the paper
+disclaims).
+
+**Recommendation:** restore v3 and either ship it or redo the plain-language pass sentence by
+sentence with a diff review. The defects above are all generation artefacts, not editorial choices.
+
 ## 10. Reproducing the audit
 
 ```bash
