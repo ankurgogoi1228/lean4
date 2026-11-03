@@ -3,6 +3,17 @@
 **Ankur Gogoi** (Department of Mathematics, Dibrugarh University)
 Report dated 3 November 2026 · **audits the v1, v2 and v3 (polished) manuscripts**
 
+> **Sign-off: GREEN FLAG** (issued 3 November 2026, on the v3 text).
+>
+> Scoped as follows. **In scope and passing:** every mathematical statement, identity, bound, case
+> distinction, threshold, explicit profile and boundary classification; the abstract's definition;
+> the `k=1` degenerate-case scoping; and the three v3 polish passages. **Not covered by the flag:**
+> (i) the `.tex` has never been compiled — no TeX engine exists in either sandbox — so LaTeX
+> presentation errors would not have surfaced; (ii) §7.2's attribution to the working-paper proof
+> should be confirmed against the published appendix, though nothing depends on it; (iii) the Lean
+> lemma `q1_ge_q0` is uncompiled, with §7.1 established numerically instead. None of these is a
+> mathematical defect.
+>
 > **Verdict: clean.** The mathematics is correct — no false theorem, no wrong threshold, no failing
 > construction. The two wording issues raised against v1 were fixed correctly and completely in v2,
 > and the optional polish of v3 is also correct: I re-derived all three of its algebraic claims
@@ -306,6 +317,19 @@ My first report was written from a reconstruction of the paper before the source
 | "`q_1 ≥ q_0` needs the hypothesis `q_0 ≤ 1`" | **Retracted.** §7.1 states the equivalence, the vacuity, and `q_0=q_1=1` at the even boundary. |
 | The two wording issues raised against v1 | **Correct, and fixed in v2** (§2 above). |
 | The three nits raised against v2 | **Correct, and fixed in v3** (§3 above). |
+
+## 12. Sign-off
+
+Re-run at sign-off on the v3 text: `paper_claims.py` **22 796 assertions, 0 failures**;
+`check_all.py` **0 failures**; `verify_constructions.py` all constructions as claimed, with the only
+`False` rows being the intended negative controls — the §7.2 profile failing weak `3/4`-Condorcet at
+`m = 1,2,3,10` (margins `9m` against a required `9m + 3/4`, exactly as the paper states) and strict
+`q`-Condorcet failing at `q = 1` (impossible by definition). Reading of the v3 source: eight
+sections, one `enumerate`, three `itemize`, four `cases` blocks, nine `\bibitem`s with every `\cite`
+key resolved, no standalone References heading, no leftover `M=1`, starred thresholds intact, and
+the `k=2` disambiguation present in all four places (abstract, introduction, §7.1, conclusion).
+
+**GREEN FLAG** on the mathematics and the manuscript text, scoped as in the header.
 
 ## 10. Reproducing the audit
 
