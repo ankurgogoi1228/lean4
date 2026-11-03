@@ -195,6 +195,39 @@ ck(all(k <= 2 for K, k in sharp),
 print('pairs where q_comp* = q_0 (i.e. q_0 is sharp):', sorted(set(k for K, k in sharp)))
 print('  e.g.', sharp[:6])
 
+# ---------------- the revised (v2) statements about the degenerate k=1 case -------------
+# abstract: sharp, on 2<=k<=r, only for even K and k=2
+restricted = [(K, k) for (K, k) in sharp if 2 <= k <= r_(K)]
+ck(all(e_(K) == 0 and k == 2 for K, k in restricted),
+   'v2 abstract: on 2<=k<=r, q_0 sharp only for even K, k=2')
+ck(all(ql(K, k, k) < q0(K, k) for K in KS for k in range(3, r_(K) + 1)),
+   'v2 abstract: 3<=k<=r => q_comp* < q_0')
+# abstract/intro/conclusion: at k=1, q_0 = q* is sharp for even K as well
+for K in KS:
+    if e_(K) == 0:
+        ck(ql(K, 1, 1) == q0(K, 1) and qstar(K, 1) == q0(K, 1),
+           'v2: k=1, even K => q_comp* = q* = q_0 (sharp)', f'K={K}')
+    else:
+        ck(ql(K, 1, 1) == qstar(K, 1) < q0(K, 1),
+           'v2: k=1, odd K => q_comp* = q* < q_0 (not sharp)', f'K={K}')
+# §7.1: at k=1, q_1 = q_0 and q* = q_0 - 1/(4(K-1)) for odd K
+for K in range(3, 40, 2):
+    ck(q1(K, 1) == q0(K, 1), 'v2 §7.1: k=1 => q_1 = q_0', f'K={K}')
+    ck(qstar(K, 1) == q0(K, 1) - F(1, 4 * (K - 1)),
+       'v2 §7.1: odd K, k=1 => q* = q_0 - 1/(4(K-1))', f'K={K}')
+# abstract: "already loose at the odd boundary k=2" (the minimal odd boundary, K=3)
+ck(ql(3, 2, 2) < q0(3, 2), 'v2 abstract: K=3,k=2 (odd boundary) => q_comp* < q_0')
+# and, in range, odd K with k=2 is loose as well
+for K in range(5, 40, 2):
+    ck(ql(K, 2, 2) < q0(K, 2), 'v2: odd K >= 5, k=2 in range => q_comp* < q_0', f'K={K}')
+# Corollary 1(c) v2 wording: "for 3<=k<=r" (odd K: q_comp*<q*<q_0; even: <q* = q_0)
+for K in KS:
+    for k in range(3, r_(K) + 1):
+        if e_(K) == 1:
+            ck(ql(K, k, k) < qstar(K, k) < q0(K, k), 'v2 Cor 1(c) odd K', f'K={K} k={k}')
+        else:
+            ck(ql(K, k, k) < qstar(K, k) == q0(K, k), 'v2 Cor 1(c) even K', f'K={K} k={k}')
+
 # §7.2 the K=4,k=2 Diss-Mahajne family, re-derived symbolically
 for m in (1, 2, 3, 10):
     n = 12 * m + 1
